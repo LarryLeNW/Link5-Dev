@@ -12,12 +12,12 @@ const items: MenuProps['items'] = [
         icon: <MailOutlined />,
     },
     {
-        label: <Link href={"/users"}>Manage Users</Link>,
+        label: <Link href={"/admin/users"}>Manage Users</Link>,
         key: 'users',
         icon: <MailOutlined />,
     },
     {
-        label: <Link href={"/blogs"}>Manage Blogs</Link>,
+        label: <Link href={"/admin/blogs"}>Manage Blogs</Link>,
         key: 'blogs',
         icon: <AppstoreOutlined />,
 
@@ -29,7 +29,6 @@ const Header: React.FC = () => {
     const [current, setCurrent] = useState('homepage');
 
     const onClick: MenuProps['onClick'] = (e) => {
-        console.log('click ', e);
         setCurrent(e.key);
     };
 

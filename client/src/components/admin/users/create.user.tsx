@@ -24,7 +24,6 @@ const CreateUser = (props: IProps) => {
     }
 
     const onFinish = async (values: any) => {
-        console.log('Success:', values);
         const res = await handleCreateUserAction(values);
         if (res?.id) {
             handleCloseCreateModal();
