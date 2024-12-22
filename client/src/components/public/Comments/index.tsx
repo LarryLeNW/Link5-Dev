@@ -38,7 +38,7 @@ const Comments: React.FC<CommentProps> = ({ postSlug }) => {
   const { status } = useSession();
 
   const { data, mutate, isLoading } = useSWR<Comment[]>(
-    postSlug ? `http://localhost:3000/api/comments?postSlug=${postSlug}` : null,
+    postSlug ? `${process.env.NEXT_PUBLIC_URL_BACKEND}/api/comments?postSlug=${postSlug}` : null,
     fetcher
   );
 
@@ -46,7 +46,7 @@ const Comments: React.FC<CommentProps> = ({ postSlug }) => {
 
   const handleSubmit = async () => {
     if (!desc) return;
-    await fetch("/api/comments", {
+    await fetch(`${process.env.NEXT_PUBLIC_URL_BACKEND}/api/comments`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

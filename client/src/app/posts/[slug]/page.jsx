@@ -5,9 +5,12 @@ import Comments from "@/components/public/Comments";
 import Menu from "@/components/public/Menu";
 
 const getData = async (slug) => {
-    const res = await fetch(`http://localhost:3000/api/posts/${slug}`, {
-        cache: "no-store",
-    });
+    const res = await fetch(
+        `${process.env.NEXT_PUBLIC_URL_BACKEND}/api/posts/${slug}`,
+        {
+            cache: "no-store",
+        }
+    );
 
     if (!res.ok) {
         throw new Error("Failed");
