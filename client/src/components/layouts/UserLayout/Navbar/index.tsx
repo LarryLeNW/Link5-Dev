@@ -2,6 +2,7 @@ import React from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
+import ThemeToggle from "../../ThemeToggle";
 
 const Navbar = () => {
   return (
@@ -14,6 +15,7 @@ const Navbar = () => {
       </div>
       <div className={styles.logo}>Share Code</div>
       <div className={styles.links}>
+        <ThemeToggle/>
         <Link href="/" className={styles.link}>Trang chủ</Link>
         <Link href="/contact" className={styles.link}>Liên hệ</Link>
         <Link href="/about" className={styles.link}>Về chúng tôi</Link>

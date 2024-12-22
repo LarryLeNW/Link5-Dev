@@ -6,6 +6,7 @@ import StyledComponentsRegistry from '@/lib/antd.registry';
 import AdminLayout from '@/components/layouts/AdminLayout';
 import UserLayout from '@/components/layouts/UserLayout';
 import NoLayout from '@/components/NoLayout';
+import { ThemeContextProvider } from "@/context/ThemeContext";
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -13,15 +14,37 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   const getLayout = () => {
-    if (pathname.startsWith('/admin')) return <AdminLayout>{children}</AdminLayout>;
-    if (pathname.startsWith('/auth')) return <NoLayout>{children}</NoLayout>;
-    return <UserLayout>{children}</UserLayout>;
+    if (pathname.startsWith('/admin')) return <AdminLayout>
+      <div className="container">
+        <div className="wrapper">
+          {children}
+        </div>
+      </div>
+    </AdminLayout>;
+    if (pathname.startsWith('/auth')) return <NoLayout>
+      <div className="container">
+        <div className="wrapper">
+          {children}
+        </div>
+      </div>
+    </NoLayout>;
+    return <UserLayout>
+      <div className="container">
+        <div className="wrapper">
+          {children}
+        </div>
+      </div>
+    </UserLayout>;
   };
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StyledComponentsRegistry>{getLayout()}</StyledComponentsRegistry>
+        <StyledComponentsRegistry>
+          <ThemeContextProvider>
+            {getLayout()}
+          </ThemeContextProvider>
+        </StyledComponentsRegistry>
       </body>
     </html>
   );
