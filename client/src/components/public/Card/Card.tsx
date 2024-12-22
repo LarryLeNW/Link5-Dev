@@ -9,6 +9,7 @@ interface CardItem {
   slug: string;
   title: string;
   desc: string;
+  views : number;
 }
 
 interface CardProps {
@@ -47,10 +48,9 @@ const Card: React.FC<CardProps> = ({ item }) => {
             style={{
               display: "flex",
               justifyContent: "end",
-              marginLeft: "auto",
             }}
           >
-            Chi tiết
+            <p>{item.views} lượt xem</p>
           </div>
         </div>
       </div>

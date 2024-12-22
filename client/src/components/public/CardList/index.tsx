@@ -11,6 +11,7 @@ interface Post {
   createdAt: string;
   catSlug: string;
   slug: string;
+  views : number;
 }
 
 interface GetDataResponse {

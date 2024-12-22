@@ -1,12 +1,11 @@
 .container {
   margin-bottom: 50px;
   display: flex;
-  align-items: center;
   gap: 50px;
   border:  1px solid brown;
   border-radius: 5px;
   padding: 20px 40px;
-
+  flex-direction: column;
 }
 
 .imageContainer {
