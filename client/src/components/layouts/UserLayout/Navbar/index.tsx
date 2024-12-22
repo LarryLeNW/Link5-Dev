@@ -1,11 +1,16 @@
-import React from "react";
+'use client';
+import React, { useEffect } from "react";
 import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "../../ThemeToggle";
 import AuthLinks from "../../../authLinks/AuthLinks";
+import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 const Navbar = () => {
+   const pathname = usePathname()
+
   return (
     <div className={styles.container}>
       <div className={styles.social}>
@@ -16,11 +21,26 @@ const Navbar = () => {
       </div>
       <div className={styles.logo}>Share Code</div>
       <div className={styles.links}>
-        <ThemeToggle/>
-        <Link href="/" className={styles.link}>Trang chủ</Link>
-        <Link href="/blog" className={styles.link}>Danh sách bài</Link>
-        <Link href="/contact" className={styles.link}>Liên hệ</Link>
-        <AuthLinks/>
+        <ThemeToggle />
+        <Link
+          href="/"
+          className={`${styles.link} ${pathname === "/" ? styles.active : ""}`}
+        >
+          Trang chủ
+        </Link>
+        <Link
+          href="/blog"
+          className={`${styles.link} ${pathname === "/blog" ? styles.active : ""}`}
+        >
+          Danh sách bài
+        </Link>
+        <Link
+          href="/contact"
+          className={`${styles.link} ${pathname === "/contact" ? styles.active : ""}`}
+        >
+          Liên hệ
+        </Link>
+        <AuthLinks />
       </div>
     </div>
   );

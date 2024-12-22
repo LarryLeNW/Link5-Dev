@@ -16,23 +16,28 @@ const Banner: FC = () => {
                         key={i + 1}
                     >
                         <Image
-                            src={`/images/dragon_${i + 1}.jpg`}
+                            src={`/images/dragon_${i + 1}.png`}
                             alt={`Dragon ${i + 1}`}
-                            width={500}
-                            height={500}
+                            width={200}
+                            height={200}
+                            style={{objectFit : "contain"}}
                         />
                     </div>
                 ))}
             </div>
 
             <div className={styles.content}>
-                <h1 data-content="CSS ONLY">CSS ONLY</h1>
+                <h1 data-content="Larry Le">Larry Le</h1>
                 <div className={styles.author}>
-                    <h2>LUN DEV</h2>
-                    <p>
-                        <b>Web Design</b>
+                    <h2>Larry Le</h2>
+                    <p style={
+                        {
+                            filter: "drop-shadow(5px 5px 10px red)"
+                        }
+                    }>
+                        <b>Le Ba Trinh</b>
                     </p>
-                    <p>Subscribe to the channel to watch many interesting videos</p>
+                    <p>Web Developer</p>
                 </div>
                 <div className={styles.model}></div>
             </div>

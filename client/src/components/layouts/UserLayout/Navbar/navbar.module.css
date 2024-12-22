@@ -31,6 +31,10 @@
     white-space: nowrap;
 }
 
+.active {
+  color:  blue;
+}
+
 @media screen and (max-width: 1280px) {
   .logo {
     font-size: 32px;
