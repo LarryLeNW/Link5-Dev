@@ -20,14 +20,14 @@ const Pagination: React.FC<PaginationProps> = ({ page, hasPrev, hasNext }) => {
         disabled={!hasPrev}
         onClick={() => router.push(`?page=${page - 1}`)}
       >
-        Previous
+        Trang sau
       </button>
       <button
         className={styles.button}
         disabled={!hasNext}
         onClick={() => router.push(`?page=${page + 1}`)}
       >
-        Next
+        Trang trước
       </button>
     </div>
   );

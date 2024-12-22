@@ -18,8 +18,8 @@ const Navbar = () => {
       <div className={styles.links}>
         <ThemeToggle/>
         <Link href="/" className={styles.link}>Trang chủ</Link>
+        <Link href="/blog" className={styles.link}>Danh sách bài</Link>
         <Link href="/contact" className={styles.link}>Liên hệ</Link>
-        <Link href="/about" className={styles.link}>Về chúng tôi</Link>
         <AuthLinks/>
       </div>
     </div>

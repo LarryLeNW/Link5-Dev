@@ -4,6 +4,7 @@ import Featured from "@/components/public/Featured";
 import CategoryList from "@/components/public/CategoryList";
 import CardList from "@/components/public/CardList";
 import Menu from "@/components/public/Menu";
+import Banner from "@/components/public/Banner";
 
 interface HomeProps {
   searchParams: {
@@ -18,6 +19,7 @@ export default function Home({ searchParams }: HomeProps) {
     <div className={styles.container}>
       <Featured />
       <CategoryList />
+      <Banner/>
       <div className={styles.content}>
         <CardList page={page} />
         <Menu />

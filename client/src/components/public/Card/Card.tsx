@@ -12,37 +12,49 @@ interface CardItem {
 }
 
 interface CardProps {
-  key?: string | number;
   item: CardItem;
 }
 
-const Card: React.FC<CardProps> = ({ key, item }) => {
+const Card: React.FC<CardProps> = ({ item }) => {
   return (
-    <div className={styles.container} key={key}>
-      {item.img && (
-        <div className={styles.imageContainer}>
-          <Image src={item.img} alt={item.title} fill className={styles.image} />
-        </div>
-      )}
-      <div className={styles.textContainer}>
-        <div className={styles.detail}>
-          <span className={styles.date}>
-            {item.createdAt.substring(0, 10)} -{" "}
-          </span>
-          <span className={styles.category}>{item.catSlug}</span>
-        </div>
-        <Link href={`/posts/${item.slug}`}>
+    <Link href={`/posts/${item.slug}`} className={styles.link}>
+      <div className={styles.container}>
+        {item.img && (
+          <div className={styles.imageContainer}>
+            <Image
+              src={item.img}
+              alt={item.title}
+              fill
+              className={styles.image}
+            />
+          </div>
+        )}
+        <div className={styles.textContainer}>
+          <div className={styles.detail}>
+            <span className={styles.date}>
+              {item.createdAt.substring(0, 10)} -{" "}
+            </span>
+            <span className={styles.category}>{item.catSlug}</span>
+          </div>
           <h1>{item.title}</h1>
-        </Link>
-        <div
-          className={styles.desc}
-          dangerouslySetInnerHTML={{ __html: item.desc.substring(0, 60) }}
-        />
-        <Link href={`/posts/${item.slug}`} className={styles.link}>
-          Read More
-        </Link>
+          <div
+            className={styles.desc}
+            dangerouslySetInnerHTML={{
+              __html: item.desc.substring(0, 60),
+            }}
+          />
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "end",
+              marginLeft: "auto",
+            }}
+          >
+            Chi tiết
+          </div>
+        </div>
       </div>
-    </div>
+    </Link>
   );
 };
 
