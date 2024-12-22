@@ -3,6 +3,7 @@ import styles from "./navbar.module.css";
 import Image from "next/image";
 import Link from "next/link";
 import ThemeToggle from "../../ThemeToggle";
+import AuthLinks from "../../../authLinks/AuthLinks";
 
 const Navbar = () => {
   return (
@@ -19,6 +20,7 @@ const Navbar = () => {
         <Link href="/" className={styles.link}>Trang chủ</Link>
         <Link href="/contact" className={styles.link}>Liên hệ</Link>
         <Link href="/about" className={styles.link}>Về chúng tôi</Link>
+        <AuthLinks/>
       </div>
     </div>
   );
