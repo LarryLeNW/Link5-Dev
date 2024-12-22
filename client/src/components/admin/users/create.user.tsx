@@ -1,4 +1,4 @@
-
+'use client';
 import { handleCreateUserAction } from '@/actions';
 import {
     Modal, Input, Form, Row, Col, message

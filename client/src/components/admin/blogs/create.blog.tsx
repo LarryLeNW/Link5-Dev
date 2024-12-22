@@ -1,4 +1,4 @@
-
+'use client';
 import { handleCreateUserAction } from '@/actions';
 import { handleCreateBlogAction } from '@/actions/blog.action';
 import {

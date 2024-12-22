@@ -1,3 +1,4 @@
+'use client';
 import StyledComponentsRegistry from '@/lib/antd.registry';
 import Navbar from './Navbar';
 import Footer from './Footer';

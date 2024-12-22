@@ -1,3 +1,4 @@
+'use client';
 import UsersTable from "@/components/admin/users/users.table";
 
 const UsersPage = async (props: any) => {

@@ -1,4 +1,4 @@
-
+'use client';
 import { handleUpdateUserAction } from '@/actions';
 import {
     Modal, Input,

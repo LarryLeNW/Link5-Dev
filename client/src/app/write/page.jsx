@@ -3,7 +3,7 @@
 import Image from "next/image";
 import styles from "./writePage.module.css";
 import { useEffect, useState } from "react";
-import "react-quill/dist/quill.bubble.css";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import {
@@ -13,7 +13,9 @@ import {
     getDownloadURL,
 } from "firebase/storage";
 import { app } from "@/utils/firebase";
-import ReactQuill from "react-quill";
+
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false });
+import "react-quill/dist/quill.bubble.css";
 
 const WritePage = () => {
     const { status } = useSession();
@@ -27,6 +29,8 @@ const WritePage = () => {
     const [catSlug, setCatSlug] = useState("");
 
     useEffect(() => {
+        if (!file) return;
+
         const storage = getStorage(app);
         const upload = () => {
             const name = new Date().getTime() + file.name;
@@ -40,16 +44,10 @@ const WritePage = () => {
                     const progress =
                         (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     console.log("Upload is " + progress + "% done");
-                    switch (snapshot.state) {
-                        case "paused":
-                            console.log("Upload is paused");
-                            break;
-                        case "running":
-                            console.log("Upload is running");
-                            break;
-                    }
                 },
-                (error) => {},
+                (error) => {
+                    console.error("Upload failed:", error);
+                },
                 () => {
                     getDownloadURL(uploadTask.snapshot.ref).then(
                         (downloadURL) => {
@@ -60,16 +58,14 @@ const WritePage = () => {
             );
         };
 
-        file && upload();
+        upload();
     }, [file]);
 
-    if (status === "loading") {
-        return <div className={styles.loading}>Loading...</div>;
-    }
-
-    if (status === "unauthenticated") {
-        router.push("/");
-    }
+    useEffect(() => {
+        if (status === "unauthenticated") {
+            router.push("/");
+        }
+    }, [status, router]);
 
     const slugify = (str) =>
         str
@@ -90,8 +86,6 @@ const WritePage = () => {
                 catSlug: catSlug || "style",
             }),
         });
-        console.log("🚀 ~ handleSubmit ~ res:", res);
-
         if (res.status === 200) {
             const data = await res.json();
             router.push(`/posts/${data.slug}`);
@@ -141,22 +135,6 @@ const WritePage = () => {
                                     height={16}
                                 />
                             </label>
-                        </button>
-                        <button className={styles.addButton}>
-                            <Image
-                                src="/external.png"
-                                alt=""
-                                width={16}
-                                height={16}
-                            />
-                        </button>
-                        <button className={styles.addButton}>
-                            <Image
-                                src="/video.png"
-                                alt=""
-                                width={16}
-                                height={16}
-                            />
                         </button>
                     </div>
                 )}

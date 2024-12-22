@@ -1,3 +1,4 @@
+'use client';
 import BlogsTable from "@/components/admin/blogs/blogs.table";
 
 const BlogsPage = async (props: any) => {

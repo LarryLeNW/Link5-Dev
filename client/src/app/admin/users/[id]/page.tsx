@@ -1,4 +1,4 @@
-
+'use client';
 const DetailUserPage = (props: any) => {
     const { params } = props;
 

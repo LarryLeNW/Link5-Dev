@@ -1,4 +1,4 @@
-
+'use client';
 import { handleUpdateBlogAction } from '@/actions/blog.action';
 import {
     Col,

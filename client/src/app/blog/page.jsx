@@ -1,3 +1,4 @@
+"use client";
 import CardList from "@/components/public/CardList";
 import styles from "./blogPage.module.css";
 import Menu from "@/components/public/Menu";
