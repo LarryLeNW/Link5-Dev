@@ -1,35 +1,72 @@
 'use client';
 import BlogsTable from "@/components/admin/blogs/blogs.table";
+import { useEffect, useState } from "react";
 
-const BlogsPage = async (props: any) => {
-    const LIMIT = 5;
-    const page = props?.searchParams?.page ?? 1;
+interface Post {
+    _id: string;
+    title: string;
+    desc: string;
+    img?: string;
+    createdAt: string;
+    catSlug: string;
+    slug: string;
+    views: number;
+}
 
-    const res = await fetch(
-        `http://localhost:8000/blogs?_page=${page}&_limit=${LIMIT}`,
-        {
-            method: "GET",
-            next: { tags: ['list-blogs'] }
+interface GetDataResponse {
+    posts: Post[];
+    count: number;
+}
+
+const BlogsPage = () => {
+    const [limit, setLimit] = useState(8);
+    const [page, setPage] = useState(1);
+    const [data, setData] = useState<GetDataResponse | null>(null);
+    const [loading, setLoading] = useState(false);
+
+    const getData = async (page: number, cat?: string) => {
+        setLoading(true);
+        try {
+            const res = await fetch(
+                `${process.env.NEXT_PUBLIC_URL_BACKEND}/api/posts?page=${page}&cat=${cat || ""}`,
+                {
+                    cache: "no-store",
+                }
+            );
+
+            if (!res.ok) {
+                throw new Error("Failed to fetch data");
+            }
+
+            const result = await res.json();
+            setData(result);
+        } catch (error) {
+            console.error(error);
+        } finally {
+            setLoading(false);
         }
-    );
-    const total_items = +(res.headers?.get("X-Total-Count") ?? 0)
-    const data = await res.json();
+    };
+
+    useEffect(() => {
+        getData(page);
+    }, [page, limit]);
 
     return (
         <div>
-            <BlogsTable
-                blogs={data ? data : []}
-                meta={
-                    {
-                        current: +page,
-                        pageSize: LIMIT,
-                        total: total_items
-                    }
-                }
-            />
-
+            {loading ? (
+                <p>Loading...</p>
+            ) : (
+                <BlogsTable
+                    blogs={data?.posts || []}
+                    meta={{
+                        current: page,
+                        pageSize: limit,
+                        total: data?.count || 0,
+                    }}
+                />
+            )}
         </div>
-    )
-}
+    );
+};
 
 export default BlogsPage;

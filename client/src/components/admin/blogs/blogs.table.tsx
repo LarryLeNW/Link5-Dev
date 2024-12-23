@@ -9,8 +9,20 @@ import { useEffect, useState } from 'react';
 import CreateBlog from './create.blog';
 import UpdateBlog from './update.blog';
 
+
+interface Post {
+    _id: string;
+    title: string;
+    desc: string;
+    img?: string;
+    createdAt: string;
+    catSlug: string;
+    slug: string;
+    views: number;
+}
+
 interface IProps {
-    blogs: IBlog[] | [];
+    blogs: Post[] | [];
     meta: {
         current: number;
         pageSize: number;
@@ -20,7 +32,7 @@ interface IProps {
 
 const BlogsTable = (props: IProps) => {
 
-    const searchParams = useSearchParams();
+    const searchParams = useSearchParams() || {};
     const pathname = usePathname();
     const { replace } = useRouter();
     const [isFetching, setIsFetching] = useState<boolean>(false);
@@ -35,22 +47,26 @@ const BlogsTable = (props: IProps) => {
         if (blogs) setIsFetching(false)
     }, [blogs])
 
-    const columns: ColumnsType<IBlog> = [
+    const columns: ColumnsType<Post> = [
         {
             title: 'Id',
-            dataIndex: 'id',
+            dataIndex: '_id',
         },
         {
             title: 'Title',
             dataIndex: 'title',
         },
         {
-            title: 'Author',
-            dataIndex: 'author',
+            title: 'Description',
+            dataIndex: 'desc',
         },
         {
-            title: 'Content',
-            dataIndex: 'content',
+            title: 'Views',
+            dataIndex: 'views',
+        },
+          {
+            title: 'createdAt',
+            dataIndex: 'Created at',
         },
         {
             title: 'Actions',
@@ -86,8 +102,6 @@ const BlogsTable = (props: IProps) => {
     ];
 
     const handleDeleteBlog = async (blog: any) => {
-        console.log("🚀 ~ handleDeleteBlog ~ blog:", blog)
-        await handleDeleteBlogAction({ id: blog.id })
     };
 
     const renderHeader = () => {
@@ -120,7 +134,7 @@ const BlogsTable = (props: IProps) => {
             <Table
                 title={renderHeader}
                 loading={isFetching}
-                rowKey={"id"}
+                rowKey={"_id"}
                 bordered
                 dataSource={blogs}
                 columns={columns}
