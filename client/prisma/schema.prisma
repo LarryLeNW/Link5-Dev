@@ -45,6 +45,8 @@ model User {
   sessions      Session[]
   Post          Post[]
   Comment       Comment[]
+  role          String    @default("user")
+  typeLogin     String    @default("credentials") 
 }
 
 model VerificationToken {

@@ -8,12 +8,14 @@ import UserLayout from '@/components/layouts/UserLayout';
 import NoLayout from '@/components/NoLayout';
 import { ThemeContextProvider } from "@/context/ThemeContext";
 import AuthProvider from "@/providers/AuthProvider"
+import { SessionProvider, useSession } from "next-auth/react";
 
 const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-
+  
+  
   const getLayout = () => {
     if (pathname.startsWith('/admin')) return <AdminLayout>
       <div className="container">
@@ -41,13 +43,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthProvider>
+          <SessionProvider>
         <StyledComponentsRegistry>
           <ThemeContextProvider>
             {getLayout()}
           </ThemeContextProvider>
         </StyledComponentsRegistry>
-        </AuthProvider>
+          </SessionProvider>
       </body>
     </html>
   );

@@ -4,6 +4,10 @@
   white-space: nowrap;
 }
 
+.logout {
+  color: red;
+}
+
 .burger {
   width: 20px;
   height: 16px;
