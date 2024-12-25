@@ -1,5 +1,4 @@
 'use client';
-import Link from "next/link";
 import styles from "./homepage.module.css";
 import Featured from "@/components/public/Featured";
 import CategoryList from "@/components/public/CategoryList";
