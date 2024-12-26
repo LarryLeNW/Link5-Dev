@@ -17,7 +17,7 @@ export default async function ProductListPage() {
   const productList = payload.data
   return (
     <div className='space-y-3'>
-      <h1>Product List</h1>
+      <h1>Blogs List</h1>
       <ProductAddButton />
 
       <div className='space-y-5'>

@@ -1,10 +1,15 @@
+import Banner from '@/components/Banner/page'
 import { Metadata } from 'next'
+import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Trang chủ',
-  description: 'Trang chủ của Productic, được tạo bởi Larry Le'
+  description: 'Trang chủ của Share Code, được tạo bởi Larry Le'
 }
 
 export default function Home() {
-  return <main>Xin chào</main>
+  return <main className='flex '>
+    <h1>Xin chào</h1>
+    <Banner />
+  </main>
 }

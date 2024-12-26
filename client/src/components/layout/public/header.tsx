@@ -8,17 +8,24 @@ import Link from 'next/link'
 export default function Header() {
   const { user } = useAppContext()
   return (
-    <div className='flex space-x-4'>
-      <ul className='flex space-x-4'>
+    <div className='flex justify-between py-2 px-8'>
+      <div className='flex gap-4'>
         <div className="flex gap-3">
-          <Image src="/facebook.png" alt="facebook" width={24} height={24} />
-          <Image src="/instagram.png" alt="instagram" width={24} height={24} />
-          <Image src="/tiktok.png" alt="tiktok" width={24} height={24} />
-          <Image src="/youtube.png" alt="youtube" width={24} height={24} />
+          <Image src="/facebook.png" alt="facebook" width={28} height={18} />
+          <Image src="/instagram.png" alt="instagram" width={28} height={18} />
+          <Image src="/youtube.png" alt="youtube" width={28} height={18} />
         </div>
 
+        <Link className='text-2xl' href='/products'>Share Code
+        </Link>
+      </div>
+
+      <ul className='flex space-x-4 items-center'>
         <li>
-          <Link href='/products'>Sản phẩm</Link>
+          <Link href='/'>Trang chủ</Link>
+        </li>
+        <li>
+          <Link href='/products'>Blogs</Link>
         </li>
 
         {user ? (
@@ -45,8 +52,9 @@ export default function Header() {
             </li>
           </>
         )}
+        <ModeToggle />
+
       </ul>
-      <ModeToggle />
     </div>
   )
 }
