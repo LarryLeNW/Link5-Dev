@@ -18,6 +18,7 @@
     "@auth/prisma-adapter": "^2.7.4",
     "@prisma/client": "^6.1.0",
     "antd": "5.11.2",
+    "bcrypt": "^5.1.1",
     "firebase": "^11.1.0",
     "next": "14.0.3",
     "next-14-empty-starter-template": "file:",
@@ -33,6 +34,7 @@
     "zustand": "^5.0.2"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "20.9.2",
     "@types/nodemailer": "^6.4.17",
     "@types/react": "18.2.37",
