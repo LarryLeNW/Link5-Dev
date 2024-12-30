@@ -1,56 +1,47 @@
-'use client';
-import "./globals.css";
-import { usePathname } from 'next/navigation'; // Hook để lấy pathname
-import { Inter } from 'next/font/google';
-import StyledComponentsRegistry from '@/lib/antd.registry';
-import AdminLayout from '@/components/layouts/AdminLayout';
-import UserLayout from '@/components/layouts/UserLayout';
-import NoLayout from '@/components/NoLayout';
-import { ThemeContextProvider } from "@/context/ThemeContext";
-import AuthProvider from "@/providers/AuthProvider"
-import { SessionProvider, useSession } from "next-auth/react";
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { ThemeProvider } from '@/components/theme-provider'
+import './globals.css'
+import { Toaster } from '@/components/ui/toaster'
+import AppProvider from '@/app/app-provider'
+import SlideSession from '@/components/slide-session'
+import { baseOpenGraph } from '@/app/shared-metadata'
+// import dynamic from 'next/dynamic'
+import Header from '@/components/header'
+// const Header = dynamic(() => import('@/components/header'), { ssr: false })
+const inter = Inter({ subsets: ['vietnamese'] })
 
-const inter = Inter({ subsets: ['latin'] });
+export const metadata: Metadata = {
+  title: {
+    template: '%s | Productic',
+    default: 'Productic'
+  },
+  description: 'Được tạo bởi Larry Le',
+  openGraph: baseOpenGraph
+}
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  
-  
-  const getLayout = () => {
-    if (pathname.startsWith('/admin')) return <AdminLayout>
-      <div className="container">
-        <div className="wrapper">
-          {children}
-        </div>
-      </div>
-    </AdminLayout>;
-    if (pathname.startsWith('/auth')) return <NoLayout>
-      <div className="container">
-        <div className="wrapper">
-          {children}
-        </div>
-      </div>
-    </NoLayout>;
-    return <UserLayout>
-      <div className="container">
-        <div className="wrapper">
-          {children}
-        </div>
-      </div>
-    </UserLayout>;
-  };
-
+export default async function RootLayout({
+  children
+}: Readonly<{
+  children: React.ReactNode
+}>) {
   return (
-    <html lang="en">
-      <body className={inter.className}>
-          <SessionProvider>
-        <StyledComponentsRegistry>
-          <ThemeContextProvider>
-            {getLayout()}
-          </ThemeContextProvider>
-        </StyledComponentsRegistry>
-          </SessionProvider>
+    <html lang='en' suppressHydrationWarning>
+      <body className={`${inter.className}`}>
+        <Toaster />
+        <ThemeProvider
+          attribute='class'
+          defaultTheme='system'
+          enableSystem
+          disableTransitionOnChange
+        >
+          <AppProvider>
+            <Header />
+            {children}
+            <SlideSession />
+          </AppProvider>
+        </ThemeProvider>
       </body>
     </html>
-  );
+  )
 }

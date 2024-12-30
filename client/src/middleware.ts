@@ -1,33 +1,30 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function middleware(req: NextRequest) {
-  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+const privatePaths = ['/me']
+const authPaths = ['/login', '/register']
 
-  const url = req.nextUrl.clone();
+const productEditRegex = /^\/products\/\d+\/edit$/
 
-  // if (!token) {
-  //   if (!url.pathname.startsWith('/auth')) {
-  //     url.pathname = '/auth/login';
-  //     return NextResponse.redirect(url);
-  //   }
-  //   return NextResponse.next();
-  // }
-
-  if (token?.role === "admin" && !url.pathname.startsWith('/admin')) {
-    url.pathname = '/admin/users';
-    return NextResponse.redirect(url);
+// This function can be marked `async` if using `await` inside
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl
+  const sessionToken = request.cookies.get('sessionToken')?.value
+  // Chưa đăng nhập thì không cho vào private paths
+  if (privatePaths.some((path) => pathname.startsWith(path)) && !sessionToken) {
+    return NextResponse.redirect(new URL('/login', request.url))
   }
-
-  if (url.pathname.startsWith('/admin') && token?.role !== 'admin') {
-    url.pathname = '/';
-    return NextResponse.redirect(url);
+  // Đăng nhập rồi thì không cho vào login/register nữa
+  if (authPaths.some((path) => pathname.startsWith(path)) && sessionToken) {
+    return NextResponse.redirect(new URL('/me', request.url))
   }
-
-  return NextResponse.next();
+  if (pathname.match(productEditRegex) && !sessionToken) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+  return NextResponse.next()
 }
 
+// See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/:path*'], 
-};
+  matcher: ['/me', '/login', '/register', '/products/:path*']
+}
