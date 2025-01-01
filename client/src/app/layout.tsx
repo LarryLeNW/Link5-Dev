@@ -7,7 +7,7 @@ import AppProvider from '@/app/app-provider'
 import SlideSession from '@/components/slide-session'
 import { baseOpenGraph } from '@/app/shared-metadata'
 // import dynamic from 'next/dynamic'
-import Header from '@/components/header'
+import Header from '@/components/layout/public/header'
 // const Header = dynamic(() => import('@/components/header'), { ssr: false })
 const inter = Inter({ subsets: ['vietnamese'] })
 

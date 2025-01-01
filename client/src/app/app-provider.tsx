@@ -17,7 +17,7 @@ const AppContext = createContext<{
   isAuthenticated: boolean
 }>({
   user: null,
-  setUser: () => {},
+  setUser: () => { },
   isAuthenticated: false
 })
 export const useAppContext = () => {

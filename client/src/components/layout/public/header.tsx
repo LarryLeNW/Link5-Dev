@@ -2,6 +2,7 @@
 import { useAppContext } from '@/app/app-provider'
 import ButtonLogout from '@/components/button-logout'
 import { ModeToggle } from '@/components/mode-toggle'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Header() {
@@ -9,6 +10,13 @@ export default function Header() {
   return (
     <div className='flex space-x-4'>
       <ul className='flex space-x-4'>
+        <div className="flex gap-3">
+          <Image src="/facebook.png" alt="facebook" width={24} height={24} />
+          <Image src="/instagram.png" alt="instagram" width={24} height={24} />
+          <Image src="/tiktok.png" alt="tiktok" width={24} height={24} />
+          <Image src="/youtube.png" alt="youtube" width={24} height={24} />
+        </div>
+
         <li>
           <Link href='/products'>Sản phẩm</Link>
         </li>
@@ -19,6 +27,9 @@ export default function Header() {
               <Link href={'/me'}>
                 Xin chào <strong>{user.name}</strong>
               </Link>
+            </li>
+            <li>
+              <Link href='/push/news'>Đăng bài</Link>
             </li>
             <li>
               <ButtonLogout />
