@@ -18,6 +18,7 @@ model Account {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   Session   Session[]
+  Role      String    @default("User")
 }
 
 model Session {
