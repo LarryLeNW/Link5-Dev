@@ -25,7 +25,7 @@ export const RegisterRes = z.object({
     token: z.string(),
     expiresAt: z.string(),
     account: z.object({
-      id: z.number(),
+      id: z.string(),
       name: z.string(),
       email: z.string()
     })

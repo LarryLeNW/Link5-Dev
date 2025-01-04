@@ -3,7 +3,7 @@ import z from 'zod'
 export const AccountRes = z
   .object({
     data: z.object({
-      id: z.number(),
+      id: z.string(),
       name: z.string(),
       email: z.string()
     }),

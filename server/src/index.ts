@@ -15,6 +15,9 @@ import mediaRoutes from '@/routes/media.route'
 import staticRoutes from '@/routes/static.route'
 import productRoutes from '@/routes/product.route'
 import testRoutes from '@/routes/test.route'
+import blogCateRoutes from '@/routes/blog-cate.route'
+import blogRoutes from '@/routes/blog.route'
+import { handleSeedData } from '@/seed/main'
 
 const fastify = Fastify({
   logger: true
@@ -56,8 +59,17 @@ const start = async () => {
     fastify.register(productRoutes, {
       prefix: '/products'
     })
+    fastify.register(blogCateRoutes, {
+      prefix: '/blog-category'
+    })
+    fastify.register(blogRoutes, {
+      prefix: '/blog'
+    })
     fastify.register(testRoutes, {
       prefix: '/test'
+    })
+    fastify.get("/seed",async () => {
+     await handleSeedData()
     })
     await fastify.listen({
       port: envConfig.PORT,

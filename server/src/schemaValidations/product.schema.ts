@@ -10,7 +10,7 @@ export const CreateProductBody = z.object({
 export type CreateProductBodyType = z.TypeOf<typeof CreateProductBody>
 
 export const ProductSchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   price: z.number(),
   description: z.string(),

@@ -29,11 +29,14 @@ export default async function ProductListPage() {
                 alt={product.name}
                 width={180}
                 height={180}
+                loading='lazy'
                 className='w-32 h-32 object-cover'
               />
+
             </Link>
 
             <h3>{product.name}</h3>
+            <h3>{product.image}</h3>
             <div>{product.price}</div>
             <ProductEditButton product={product} />
           </div>
