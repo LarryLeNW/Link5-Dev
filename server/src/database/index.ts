@@ -3,7 +3,7 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient({
   datasourceUrl: envConfig.DATABASE_URL,
-  log: ['info'],
+  log: ['info']
 })
 
 export default prisma

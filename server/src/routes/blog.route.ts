@@ -1,12 +1,21 @@
-import { createBlog, getBlogList } from '@/controllers/blog.controller';
-import { requireLoginedHook } from '@/hooks/auth.hooks';
-import { CreateBlogBody, CreateBlogBodyType, BlogRes, BlogListRes, BlogResType, BlogListResType } from '@/schemaValidations/blog.schema';
-import { FastifyInstance, FastifyPluginOptions } from 'fastify';
+import { createBlog, getBlogList } from '@/controllers/blog.controller'
+import { requireLoginedHook } from '@/hooks/auth.hooks'
+import {
+  CreateBlogBody,
+  CreateBlogBodyType,
+  BlogRes,
+  BlogResType,
+  BlogPageRes,
+  BlogSchema
+} from '@/schemaValidations/blog.schema'
+import PageResponse, { PageRes } from '@/types/page.response.type'
+import { FastifyInstance, FastifyPluginOptions } from 'fastify'
+import z from 'zod'
 
 export default async function blogRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
   fastify.post<{
-    Body: CreateBlogBodyType;
-    Reply: BlogResType;
+    Body: CreateBlogBodyType
+    Reply: BlogResType
   }>(
     '/',
     {
@@ -19,31 +28,31 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
       preValidation: fastify.auth([requireLoginedHook])
     },
     async (request, reply) => {
-      const blog = await createBlog(request.body);
+      const blog = await createBlog(request.body)
       reply.send({
         data: blog,
         message: 'Tạo blog thành công!'
-      });
+      })
     }
-  );
+  )
 
   fastify.get<{
-    Reply: BlogListResType;
+    Querystring:  Record<string, any>,
+    Reply: PageResponse<z.infer<typeof BlogSchema>>
   }>(
     '/',
     {
       schema: {
         response: {
-          200: BlogListRes
+          200:  BlogPageRes
         }
       }
     },
     async (request, reply) => {
-      const blogs = await getBlogList();
-      reply.send({
-        data: blogs,
-        message: 'Lấy danh sách blogs thành công!'
-      });
+      const data = await getBlogList(request.query)
+      reply.send(
+         data
+       )
     }
-  );
+  )
 }

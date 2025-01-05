@@ -9,21 +9,23 @@ datasource db {
 }
 
 model Account {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  email     String    @unique
-  name      String
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  Session   Session[]
-  Blogs     Blog[]    @relation("AccountBlogs")
-  role      String    @default("User")
+  id           String        @id @default(auto()) @map("_id") @db.ObjectId
+  email        String        @unique
+  name         String
+  password     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  Session      Session[]
+  blogs        Blog[]        @relation("AccountBlogs")
+  blogComments CommentBlog[] @relation("AccountCommentBlog")
+  blogEmotions EmotionBlog[] @relation("AccountBlogEmotions")
+  role         String        @default("User")
 }
 
 model Session {
-  token     String    @id @map("_id") 
-  accountId String    @db.ObjectId   
-  account   Account   @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  token     String   @id @map("_id")
+  accountId String   @db.ObjectId
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade, onUpdate: NoAction)
   expiresAt DateTime
   createdAt DateTime @default(now())
 }
@@ -38,48 +40,74 @@ model Product {
   updatedAt   DateTime @updatedAt
 }
 
-model Blog {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  title       String
-  content     String
-  views       BigInt           @default(0)
-  categories  BlogToCategory[] 
-  tags        BlogToTag[]      
-  postById    String           @db.ObjectId
-  postBy      Account          @relation("AccountBlogs", fields: [postById], references: [id], onDelete: Cascade)
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-}
-
 model BlogCategory {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  name        String           @unique
-  blogs       BlogToCategory[] 
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
+  id        String           @id @default(auto()) @map("_id") @db.ObjectId
+  name      String           @unique
+  image     String
+  blogs     BlogToCategory[]
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 }
 
 model TagBlog {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name        String       @unique
-  image       String
-  blogs       BlogToTag[] 
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  name      String      @unique
+  blogs     BlogToTag[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
 }
 
 model BlogToCategory {
-  id          String           @id @default(auto()) @map("_id") @db.ObjectId
-  blogId      String           @db.ObjectId
-  categoryId  String           @db.ObjectId
-  blog        Blog             @relation(fields: [blogId], references: [id])
-  category    BlogCategory     @relation(fields: [categoryId], references: [id])
+  id         String       @id @default(auto()) @map("_id") @db.ObjectId
+  blogId     String       @db.ObjectId
+  categoryId String       @db.ObjectId
+  blog       Blog         @relation(fields: [blogId], references: [id])
+  category   BlogCategory @relation(fields: [categoryId], references: [id])
 }
 
 model BlogToTag {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  blogId      String       @db.ObjectId
-  tagId       String       @db.ObjectId
-  blog        Blog         @relation(fields: [blogId], references: [id])
-  tag         TagBlog      @relation(fields: [tagId], references: [id])
+  id     String  @id @default(auto()) @map("_id") @db.ObjectId
+  blogId String  @db.ObjectId
+  tagId  String  @db.ObjectId
+  blog   Blog    @relation(fields: [blogId], references: [id])
+  tag    TagBlog @relation(fields: [tagId], references: [id])
+}
+
+model Blog {
+  id         String           @id @default(auto()) @map("_id") @db.ObjectId
+  title      String
+  content    String
+  views      BigInt           @default(0)
+  categories BlogToCategory[]
+  tags       BlogToTag[]
+  comments   CommentBlog[]    @relation("BlogToCommentBlog")
+  postById   String           @db.ObjectId
+  postBy     Account          @relation("AccountBlogs", fields: [postById], references: [id], onDelete: Cascade)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+}
+
+model CommentBlog {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  content   String
+  blogId    String        @db.ObjectId
+  blog      Blog          @relation("BlogToCommentBlog", fields: [blogId], references: [id], onDelete: Cascade)
+  postById  String        @db.ObjectId
+  postBy    Account       @relation("AccountCommentBlog", fields: [postById], references: [id], onDelete: Cascade)
+  parentId  String?       @db.ObjectId
+  parent    CommentBlog?  @relation("CommentBlogReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  replies   CommentBlog[] @relation("CommentBlogReplies")
+  emotions  EmotionBlog[] @relation("CommentBlogEmotions")
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model EmotionBlog {
+  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  type      String
+  commentId String      @db.ObjectId
+  comment   CommentBlog @relation("CommentBlogEmotions", fields: [commentId], references: [id], onDelete: Cascade)
+  postById  String      @db.ObjectId
+  postBy    Account     @relation("AccountBlogEmotions", fields: [postById], references: [id], onDelete: Cascade)
+  createdAt DateTime    @default(now())
 }

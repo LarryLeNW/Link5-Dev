@@ -36,7 +36,7 @@ export default function Header() {
               </Link>
             </li>
             <li>
-              <Link href='/push/news'>Đăng bài</Link>
+              <Link href='/blogs/write'>Đăng bài</Link>
             </li>
             <li>
               <ButtonLogout />

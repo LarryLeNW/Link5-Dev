@@ -14,4 +14,3 @@ export const createBlogCategory = (data: CreateBlogCategoryBodyType) => {
     data
   })
 }
-

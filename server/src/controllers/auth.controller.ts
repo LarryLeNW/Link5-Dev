@@ -44,7 +44,6 @@ export const registerController = async (body: RegisterBodyType) => {
   }
 }
 
-
 export const logoutController = async (sessionToken: string) => {
   await prisma.session.delete({
     where: {

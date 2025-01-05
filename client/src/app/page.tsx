@@ -9,7 +9,6 @@ export const metadata: Metadata = {
 
 export default function Home() {
   return <main className='flex '>
-    <h1>Xin chào</h1>
     <Banner />
   </main>
 }

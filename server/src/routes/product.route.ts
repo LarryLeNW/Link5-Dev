@@ -76,7 +76,7 @@ export default async function productRoutes(fastify: FastifyInstance, options: F
           200: ProductRes
         }
       },
-      preValidation: fastify.auth([requireLoginedHook,  requireAuthorizedHook(['Admin', 'Manager'])])
+      preValidation: fastify.auth([requireLoginedHook, requireAuthorizedHook(['Admin', 'Manager'])])
     },
     async (request, reply) => {
       const product = await createProduct(request.body)

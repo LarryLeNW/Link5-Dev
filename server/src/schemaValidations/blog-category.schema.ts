@@ -8,7 +8,7 @@ export const CreateBlogCategoryBody = z.object({
 export type CreateBlogCategoryBodyType = z.TypeOf<typeof CreateBlogCategoryBody>
 
 export const BlogCategorySchema = z.object({
-  id: z.number(),
+  id: z.string(),
   name: z.string(),
   image: z.string(),
   createdAt: z.date(),

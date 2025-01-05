@@ -68,8 +68,8 @@ const start = async () => {
     fastify.register(testRoutes, {
       prefix: '/test'
     })
-    fastify.get("/seed",async () => {
-     await handleSeedData()
+    fastify.get('/seed', async () => {
+      await handleSeedData()
     })
     await fastify.listen({
       port: envConfig.PORT,

@@ -23,11 +23,10 @@ export const requireLoginedHook = async (request: FastifyRequest) => {
 
 export const requireAuthorizedHook = (allowedRoles: string[]) => {
   return async (request: FastifyRequest) => {
-    const account = request.account;
+    const account = request.account
 
     if (!account || !allowedRoles.includes(account.role)) {
-      throw new AuthError('Bạn không có quyền thực hiện hành động này!');
+      throw new AuthError('Bạn không có quyền thực hiện hành động này!')
     }
-  };
-};
-
+  }
+}

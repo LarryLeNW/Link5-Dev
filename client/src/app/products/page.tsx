@@ -18,7 +18,7 @@ export default async function ProductListPage() {
   return (
     <div className='space-y-3'>
       <h1>Blogs List</h1>
-      <ProductAddButton />
+      {/* <ProductAddButton /> */}
 
       <div className='space-y-5'>
         {productList.map((product) => (
