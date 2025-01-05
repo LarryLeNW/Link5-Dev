@@ -36,6 +36,6 @@ export type ProductListResType = z.TypeOf<typeof ProductListRes>
 export const UpdateProductBody = CreateProductBody
 export type UpdateProductBodyType = CreateProductBodyType
 export const ProductParams = z.object({
-  id: z.coerce.number()
+  id: z.coerce.string()
 })
 export type ProductParamsType = z.TypeOf<typeof ProductParams>

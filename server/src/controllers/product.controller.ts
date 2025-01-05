@@ -9,7 +9,7 @@ export const getProductList = () => {
   })
 }
 
-export const getProductDetail = (id: number) => {
+export const getProductDetail = (id: string) => {
   return prisma.product.findUniqueOrThrow({
     where: {
       id
@@ -23,7 +23,7 @@ export const createProduct = (data: CreateProductBodyType) => {
   })
 }
 
-export const updateProduct = (id: number, data: UpdateProductBodyType) => {
+export const updateProduct = (id: string, data: UpdateProductBodyType) => {
   return prisma.product.update({
     where: {
       id
@@ -32,7 +32,7 @@ export const updateProduct = (id: number, data: UpdateProductBodyType) => {
   })
 }
 
-export const deleteProduct = (id: number) => {
+export const deleteProduct = (id: string) => {
   return prisma.product.delete({
     where: {
       id
