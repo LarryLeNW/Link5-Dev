@@ -26,6 +26,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
 
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className}`}>
@@ -37,7 +38,6 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <AppProvider>
-            <Header />
             {children}
             <SlideSession />
           </AppProvider>

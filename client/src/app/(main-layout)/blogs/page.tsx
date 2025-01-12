@@ -1,8 +1,6 @@
 export const dynamic = 'force-dynamic'
 
 import blogApiRequest from '@/apiRequests/blog'
-import productApiRequest from '@/apiRequests/product'
-import ProductEditButton from '@/app/products/_components/product-edit-button'
 import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -14,7 +12,6 @@ export const metadata: Metadata = {
 
 export default async function BlogListPage() {
     const { payload } = await blogApiRequest.getList()
-    console.log("🚀 ~ BlogListPage ~ payload:", payload)
     const blogList = payload.data
     return (
         <div className='space-y-3 mx-2'>
