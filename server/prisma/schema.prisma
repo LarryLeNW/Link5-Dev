@@ -12,6 +12,7 @@ model Account {
   id           String        @id @default(auto()) @map("_id") @db.ObjectId
   email        String        @unique
   name         String
+  avatar       String?
   password     String
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
@@ -61,28 +62,29 @@ model BlogToCategory {
   id         String       @id @default(auto()) @map("_id") @db.ObjectId
   blogId     String       @db.ObjectId
   categoryId String       @db.ObjectId
-  blog       Blog         @relation(fields: [blogId], references: [id])
-  category   BlogCategory @relation(fields: [categoryId], references: [id])
+  blog       Blog         @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  category   BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
 model BlogToTag {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
   blogId String  @db.ObjectId
   tagId  String  @db.ObjectId
-  blog   Blog    @relation(fields: [blogId], references: [id])
-  tag    TagBlog @relation(fields: [tagId], references: [id])
+  blog   Blog    @relation(fields: [blogId], references: [id] , onDelete: Cascade)
+  tag    TagBlog @relation(fields: [tagId], references: [id] , onDelete: Cascade)
 }
 
 model Blog {
   id         String           @id @default(auto()) @map("_id") @db.ObjectId
   title      String
   content    String
-  views      BigInt           @default(0)
-  categories BlogToCategory[]
+  views      Int           @default(0)
+  categories BlogToCategory[] 
   tags       BlogToTag[]
   comments   CommentBlog[]    @relation("BlogToCommentBlog")
   postById   String           @db.ObjectId
-  postBy     Account          @relation("AccountBlogs", fields: [postById], references: [id], onDelete: Cascade)
+  postBy     Account          @relation("AccountBlogs", fields: [postById], references: [id])
+  emotions   EmotionBlog[]    @relation("BlogEmotions")
   createdAt  DateTime         @default(now())
   updatedAt  DateTime         @updatedAt
 }
@@ -105,9 +107,12 @@ model CommentBlog {
 model EmotionBlog {
   id        String      @id @default(auto()) @map("_id") @db.ObjectId
   type      String
-  commentId String      @db.ObjectId
-  comment   CommentBlog @relation("CommentBlogEmotions", fields: [commentId], references: [id], onDelete: Cascade)
+  blogId    String?      @db.ObjectId
+  blog      Blog?        @relation("BlogEmotions", fields: [blogId], references: [id], onDelete: Cascade)
+  commentId String?      @db.ObjectId
+  comment   CommentBlog? @relation("CommentBlogEmotions", fields: [commentId], references: [id], onDelete: Cascade)
   postById  String      @db.ObjectId
   postBy    Account     @relation("AccountBlogEmotions", fields: [postById], references: [id], onDelete: Cascade)
   createdAt DateTime    @default(now())
+  updatedAt DateTime      @updatedAt
 }

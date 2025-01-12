@@ -18,6 +18,8 @@ import testRoutes from '@/routes/test.route'
 import blogCateRoutes from '@/routes/blog-cate.route'
 import blogRoutes from '@/routes/blog.route'
 import { handleSeedData } from '@/seed/main'
+import blogCommentRoutes from '@/routes/blog-comment.route'
+import blogEmotionRoutes from '@/routes/blog-emotion.route'
 
 const fastify = Fastify({
   logger: true
@@ -64,6 +66,12 @@ const start = async () => {
     })
     fastify.register(blogRoutes, {
       prefix: '/blog'
+    })
+    fastify.register(blogCommentRoutes, {
+      prefix: '/blog-comment'
+    })
+    fastify.register(blogEmotionRoutes, {
+      prefix: '/blog-emotion'
     })
     fastify.register(testRoutes, {
       prefix: '/test'

@@ -11,12 +11,14 @@ export const CreateBlogBody = z.object({
 })
 
 export type CreateBlogBodyType = z.TypeOf<typeof CreateBlogBody>
-
+export type UpdateBlogBodyType = CreateBlogBodyType;
+export const UpdateBlogBody = CreateBlogBody;
 
 export const BlogSchema = z.object({
   id: z.string(),
   title: z.string(),
   content: z.string(),
+  views: z.number(),
   categories: z.array(z.object({
     id: z.string(),
     name: z.string(),
