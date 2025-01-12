@@ -8,7 +8,7 @@ const authPaths = ['/login', '/register']
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
   const sessionToken = request.cookies.get('sessionToken')?.value
-  
+
   // Chưa đăng nhập thì không cho vào private paths
   if (privatePaths.some((path) => pathname.startsWith(path)) && !sessionToken) {
     return NextResponse.redirect(new URL('/login', request.url))
@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-  matcher: ['/me', '/login', '/register', '/products/:path*', '/blogs/:path*' ]
+  matcher: ['/me', '/login', '/register', '/products/:path*', '/blogs/:path*']
 }

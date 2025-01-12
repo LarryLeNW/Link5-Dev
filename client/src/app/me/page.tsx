@@ -14,6 +14,7 @@ export default async function MeProfile() {
   // https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating#opting-out-of-data-caching
 
   const result = await accountApiRequest.me(sessionToken?.value ?? '')
+  console.log("🚀 ~ MeProfile ~ result:", result)
   return (
     <div>
       <h1>Profile</h1>

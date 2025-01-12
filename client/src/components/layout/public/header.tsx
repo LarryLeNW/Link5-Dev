@@ -25,7 +25,10 @@ export default function Header() {
           <Link href='/'>Trang chủ</Link>
         </li>
         <li>
-          <Link href='/products'>Blogs</Link>
+          <Link href='/products'>Sản phẩm</Link>
+        </li>
+        <li>
+          <Link href='/blogs'>Blogs</Link>
         </li>
 
         {user ? (

@@ -39,15 +39,18 @@ const LoginForm = () => {
     setLoading(true)
     try {
       const result = await authApiRequest.login(values)
+      const { data, message } = result.payload;
+
+
 
       await authApiRequest.auth({
-        sessionToken: result.payload.data.token,
-        expiresAt: result.payload.data.expiresAt
+        sessionToken: data.token,
+        expiresAt: data.expiresAt
       })
       toast({
-        description: result.payload.message
+        description: message
       })
-      setUser(result.payload.data.account)
+      setUser(data.account)
       router.push('/')
       router.refresh()
     } catch (error: any) {

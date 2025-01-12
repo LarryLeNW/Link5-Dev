@@ -3,7 +3,7 @@ import { Inter } from 'next/font/google'
 import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 import { Toaster } from '@/components/ui/toaster'
-import AppProvider from '@/app/app-provider'
+import AppProvider, { useAppContext } from '@/app/app-provider'
 import SlideSession from '@/components/slide-session'
 import { baseOpenGraph } from '@/app/shared-metadata'
 // import dynamic from 'next/dynamic'
@@ -25,6 +25,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode
 }>) {
+
   return (
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className}`}>
