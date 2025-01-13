@@ -4,8 +4,7 @@ import productApiRequest from '@/apiRequests/product'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
-import ProductEditButton from '@/app/products/_components/product-edit-button'
-import ProductAddButton from '@/app/products/_components/product-add-button'
+import ProductEditButton from '@/app/(main-layout)/products/_components/product-edit-button'
 
 export const metadata: Metadata = {
   title: 'Danh sách sản phẩm',

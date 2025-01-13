@@ -1,5 +1,5 @@
 'use client'
-import DeleteProduct from '@/app/products/_components/delete-product'
+import DeleteProduct from '@/app/(main-layout)/products/_components/delete-product'
 import { Button } from '@/components/ui/button'
 import { ProductListResType } from '@/schemaValidations/product.schema'
 import Link from 'next/link'

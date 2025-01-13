@@ -1,7 +1,7 @@
 import accountApiRequest from '@/apiRequests/account'
-import ProfileForm from '@/app/me/profile-form'
 import { cookies } from 'next/headers'
 import type { Metadata } from 'next'
+import ProfileForm from '@/app/(main-layout)/me/profile-form'
 
 export const metadata: Metadata = {
   title: 'Hồ sơ người dùng'
