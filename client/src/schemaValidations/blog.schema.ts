@@ -14,8 +14,8 @@ export const BlogSchema = z.object({
     name: z.string(),
   })).optional(),
   postBy: z.object({ id: z.string(), name: z.string() }),
-  createdAt: z.date(),
-  updatedAt: z.date()
+  createdAt: z.string(),
+  updatedAt: z.string()
 })
 
 export const BlogRes = z.object({
@@ -27,6 +27,7 @@ export type BlogResType = z.TypeOf<typeof BlogRes>
 
 export const BlogListRes = z.object({
   data: z.array(BlogSchema),
+  totalPages: z.number(),
   message: z.string()
 })
 

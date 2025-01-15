@@ -8,6 +8,7 @@ import SlideSession from '@/components/slide-session'
 import { baseOpenGraph } from '@/app/shared-metadata'
 // import dynamic from 'next/dynamic'
 import Header from '@/components/layout/public/header'
+import { Providers } from '@/components/next-ui-provider'
 // const Header = dynamic(() => import('@/components/header'), { ssr: false })
 const inter = Inter({ subsets: ['vietnamese'] })
 
@@ -31,17 +32,19 @@ export default async function RootLayout({
     <html lang='en' suppressHydrationWarning>
       <body className={`${inter.className}`}>
         <Toaster />
-        <ThemeProvider
-          attribute='class'
-          defaultTheme='system'
-          enableSystem
-          disableTransitionOnChange
-        >
-          <AppProvider>
-            {children}
-            <SlideSession />
-          </AppProvider>
-        </ThemeProvider>
+        <Providers>
+          <ThemeProvider
+            attribute='class'
+            defaultTheme='system'
+            enableSystem
+            disableTransitionOnChange
+          >
+            <AppProvider>
+              {children}
+              <SlideSession />
+            </AppProvider>
+          </ThemeProvider>
+        </Providers>
       </body>
     </html>
   )

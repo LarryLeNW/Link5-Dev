@@ -1,5 +1,5 @@
 import productApiRequest from '@/apiRequests/product'
-import ProductAddForm from '@/app/products/_components/product-add-form'
+import ProductAddForm from '@/app/(main-layout)/products/_components/product-add-form'
 import { Metadata, ResolvingMetadata } from 'next'
 import { cache } from 'react'
 
@@ -26,7 +26,7 @@ export default async function ProductEdit(props: Props) {
   try {
     const { payload } = await getDetail(Number(params.id))
     product = payload.data
-  } catch (error) {}
+  } catch (error) { }
 
   return (
     <div>

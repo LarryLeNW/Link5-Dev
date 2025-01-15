@@ -3,8 +3,9 @@ import { normalizePath } from '@/lib/utils'
 import { LoginResType } from '@/schemaValidations/auth.schema'
 import { redirect } from 'next/navigation'
 
-type CustomOptions = Omit<RequestInit, 'method'> & {
-  baseUrl?: string | undefined
+export type CustomOptions = Omit<RequestInit, 'method'> & {
+  baseUrl?: string | undefined,
+  params?: Object | undefined
 }
 
 const ENTITY_ERROR_STATUS = 422
@@ -66,8 +67,8 @@ const request = async <Response>(
     body instanceof FormData
       ? {}
       : {
-          'Content-Type': 'application/json'
-        }
+        'Content-Type': 'application/json'
+      }
   if (isClient()) {
     const sessionToken = localStorage.getItem('sessionToken')
     if (sessionToken) {
@@ -82,7 +83,14 @@ const request = async <Response>(
       ? envConfig.NEXT_PUBLIC_API_ENDPOINT
       : options.baseUrl
 
-  const fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`
+  let fullUrl = url.startsWith('/') ? `${baseUrl}${url}` : `${baseUrl}/${url}`;
+
+  if (options?.params) {
+    const queryString = new URLSearchParams(
+      Object.entries(options.params).map(([key, value]) => [key, String(value)])
+    ).toString();
+    fullUrl = `${fullUrl}${fullUrl.includes('?') ? '&' : '?'}${queryString}`;
+  }
 
   const res = await fetch(fullUrl, {
     ...options,

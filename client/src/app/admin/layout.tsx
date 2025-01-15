@@ -10,9 +10,9 @@ export default async function RootLayout({
     return (
         <>
             <Sidebar />
-            <div className="relative md:ml-64  bg-blueGray-100 ">
+            <div className="relative md:ml-64  border h-[100vh] flex flex-col ">
                 <header>header</header>
-                <div className="flex flex-1 px-4 md:px-10 mx-auto w-full -ml-18 ">
+                <div className="flex flex-1 px-4 md:px-10 mx-auto w-full -ml-18  ">
                     {children}
                 </div>
             </div>

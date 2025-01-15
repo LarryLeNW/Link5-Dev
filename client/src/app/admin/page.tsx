@@ -1,9 +1,8 @@
-function Dashboard() {
-    return <>
-        <div className="flex flex-wrap">
-            dashboard 23
-        </div>
-    </>
-}
+"use client";
+import dynamic from "next/dynamic";
 
-export default Dashboard;
+const DynamicTable = dynamic(() => import("./components/ui/TableCustom"), { ssr: false });
+
+export default function Dashboard() {
+    return null;
+}
