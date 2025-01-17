@@ -4,7 +4,6 @@ import { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
 import { fakerDE as faker } from '@faker-js/faker';
-import { useState } from 'react'
 import BlogList from '@/app/(main-layout)/blogs/blog-list/blog-list'
 export const metadata: Metadata = {
     title: 'Danh sách bài viết',
