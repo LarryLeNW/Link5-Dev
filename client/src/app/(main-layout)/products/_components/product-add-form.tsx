@@ -42,6 +42,7 @@ const ProductAddForm = ({ product }: { product?: Product }) => {
     }
   })
   const image = form.watch('image')
+
   const createProduct = async (values: CreateProductBodyType) => {
     setLoading(true)
     try {

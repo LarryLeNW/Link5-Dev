@@ -11,9 +11,9 @@ export default function Header() {
     <div className='flex justify-between py-2 px-8'>
       <div className='flex gap-4'>
         <div className="flex gap-3">
-          <Image src="/facebook.png" alt="facebook" width={28} height={18} />
-          <Image src="/instagram.png" alt="instagram" width={28} height={18} />
-          <Image src="/youtube.png" alt="youtube" width={28} height={18} />
+          <Image src="/facebook.png" alt="facebook" width={20} height={10} className='object-contain' />
+          <Image src="/instagram.png" alt="instagram" width={20} height={10} className='object-contain' />
+          <Image src="/youtube.png" alt="youtube" width={20} height={10} className='object-contain' />
         </div>
 
         <Link className='text-2xl' href='/products'>Share Code

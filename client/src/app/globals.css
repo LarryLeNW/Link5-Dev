@@ -71,3 +71,13 @@
     @apply bg-background text-foreground;
   }
 }
+
+.ql-container{
+  border: none !important;
+}
+.ql-toolbar{
+  border: none !important;
+}
+.ql-editor{
+  border: none !important;
+}
