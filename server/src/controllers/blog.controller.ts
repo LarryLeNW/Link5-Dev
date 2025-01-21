@@ -1,9 +1,10 @@
 import prisma from '@/database';
+import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogSchema, CreateBlogBodyType, UpdateBlogBodyType } from '@/schemaValidations/blog.schema';
 import PageResponse from '@/types/page.response.type';
 import z from 'zod';
 
-export const createBlog = async (data: CreateBlogBodyType) => {
+export const createBlog = async (data: CreateBlogBodyType, account: AccountResType["data"]) => {
   const tagIds = await Promise.all(
     (data.tags || []).map(async (name) => {
       const tag = await prisma.tagBlog.upsert({
@@ -20,7 +21,7 @@ export const createBlog = async (data: CreateBlogBodyType) => {
     data: {
       title: data.title,
       content: data.content,
-      postById: data.postById,
+      postById: account.id,
       categories: {
         create: data.categoryIds.map((categoryId) => ({
           category: { connect: { id: categoryId } },

@@ -7,7 +7,8 @@ export const CreateBlogBody = z.object({
   content: z.string().min(1),
   categoryIds: z.array(z.string()),
   tags: z.array(z.string()).optional(),
-  postById: z.string(),
+  image: z.string().optional(),
+  description: z.string().optional()
 })
 
 export type CreateBlogBodyType = z.TypeOf<typeof CreateBlogBody>
@@ -33,7 +34,7 @@ export const BlogSchema = z.object({
 })
 
 export const BlogRes = z.object({
-  data: BlogSchema,
+  data: BlogSchema.optional(),
   message: z.string()
 })
 

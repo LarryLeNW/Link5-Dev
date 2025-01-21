@@ -1,5 +1,6 @@
 import { createBlog, deleteBlog, getBlogList, updateBlog } from '@/controllers/blog.controller'
 import { requireLoginedHook } from '@/hooks/auth.hooks'
+import { AccountRes } from '@/schemaValidations/account.schema'
 import { UpdateBlogCateBody } from '@/schemaValidations/blog-category.schema'
 import {
   CreateBlogBody,
@@ -13,6 +14,7 @@ import {
 } from '@/schemaValidations/blog.schema'
 import { MessageRes, MessageResType } from '@/schemaValidations/common.schema'
 import PageResponse, { PageRes } from '@/types/page.response.type'
+import { AuthError } from '@/utils/errors'
 import { FastifyInstance, FastifyPluginOptions } from 'fastify'
 import z from 'zod'
 
@@ -32,7 +34,10 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
       preValidation: fastify.auth([requireLoginedHook])
     },
     async (request, reply) => {
-      const blog = await createBlog(request.body)
+      if (!request.account) {
+        return reply.status(401).send({ message: "Not Permission Denied" })
+      }
+      const blog = await createBlog(request.body, request.account)
       reply.send({
         data: blog,
         message: 'Tạo blog thành công!'

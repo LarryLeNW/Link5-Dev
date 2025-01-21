@@ -26,7 +26,10 @@ const configSchema = z.object({
   UPLOAD_FOLDER: z.string(),
   COOKIE_MODE: z.enum(['true', 'false']).transform((val) => val === 'true'),
   IS_PRODUCTION: z.enum(['true', 'false']).transform((val) => val === 'true'),
-  PRODUCTION_URL: z.string()
+  PRODUCTION_URL: z.string(),
+  IK_URL_ENDPOINT: z.string(),
+  IK_PUBLIC_KEY: z.string(),
+  IK_PRIVATE_KEY: z.string(),
 })
 
 const configServer = configSchema.safeParse(process.env)
@@ -44,6 +47,6 @@ export default envConfig
 declare global {
   // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace NodeJS {
-    interface ProcessEnv extends z.infer<typeof configSchema> {}
+    interface ProcessEnv extends z.infer<typeof configSchema> { }
   }
 }

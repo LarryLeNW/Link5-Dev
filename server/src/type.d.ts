@@ -9,7 +9,7 @@ declare global {
 }
 
 declare module 'fastify' {
-  interface FastifyInstance {}
+  interface FastifyInstance { }
   interface FastifyRequest {
     account?: Account
     cookies: {
