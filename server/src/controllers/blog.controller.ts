@@ -73,6 +73,8 @@ export const getBlogList = async (params: Record<string, any>): Promise<PageResp
       id: true,
       title: true,
       content: true,
+      description: true,
+      image: true,
       views: true,
       createdAt: true,
       updatedAt: true,
@@ -101,6 +103,35 @@ export const getBlogList = async (params: Record<string, any>): Promise<PageResp
     message: "Lấy danh sách blogs thành công!",
   };
 };
+
+export const getBlogDetail = async (id: string) => {
+  return await prisma.blog.findUniqueOrThrow({
+    where: {
+      id
+    },
+    select: {
+      id: true,
+      title: true,
+      content: true,
+      description: true,
+      image: true,
+      views: true,
+      createdAt: true,
+      updatedAt: true,
+      postBy: { select: { id: true, name: true } },
+      categories: {
+        select: {
+          category: { select: { id: true, name: true } }
+        }
+      },
+      tags: { select: { tag: { select: { id: true, name: true } } } },
+    },
+  }).then(result => ({
+    ...result,
+    categories: result.categories?.map((relation) => relation.category),
+    tags: result.tags?.map((relation) => relation.tag),
+  }))
+}
 
 export const deleteBlog = (blogId: string) => {
   return prisma.$transaction([
@@ -179,3 +210,4 @@ export const updateBlog = async (id: string, data: UpdateBlogBodyType) => {
     ))
   });
 };
+

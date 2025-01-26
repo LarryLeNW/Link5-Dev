@@ -19,7 +19,9 @@ export const BlogSchema = z.object({
   id: z.string(),
   title: z.string(),
   content: z.string(),
+  image: z.string().nullable(),
   views: z.number(),
+  description: z.string().nullable(),
   categories: z.array(z.object({
     id: z.string(),
     name: z.string(),
@@ -42,3 +44,7 @@ export type BlogResType = z.TypeOf<typeof BlogRes>
 
 export const BlogPageRes = PageRes(BlogSchema);
 
+export const BlogParams = z.object({
+  id: z.coerce.string()
+})
+export type BlogParamsType = z.TypeOf<typeof BlogParams>

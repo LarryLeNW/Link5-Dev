@@ -1,88 +1,67 @@
-// Import the framework and instantiate it
 import envConfig, { API_URL } from '@/config'
-import { errorHandlerPlugin } from '@/plugins/errorHandler.plugins'
-import validatorCompilerPlugin from '@/plugins/validatorCompiler.plugins'
-import accountRoutes from '@/routes/account.route'
-import authRoutes from '@/routes/auth.route'
+import path from 'path'
+
+import Fastify, { FastifyInstance } from 'fastify'
+import cors from '@fastify/cors'
 import fastifyAuth from '@fastify/auth'
 import fastifyCookie from '@fastify/cookie'
 import fastifyHelmet from '@fastify/helmet'
-import Fastify from 'fastify'
-import cors from '@fastify/cors'
-import path from 'path'
+
+import { errorHandlerPlugin } from '@/plugins/errorHandler.plugins'
+import validatorCompilerPlugin from '@/plugins/validatorCompiler.plugins'
+import socketIOPlugin from '@/plugins/socketIO.plugin'
+
 import { createFolder } from '@/utils/helpers'
-import mediaRoutes from '@/routes/media.route'
-import staticRoutes from '@/routes/static.route'
-import productRoutes from '@/routes/product.route'
-import testRoutes from '@/routes/test.route'
-import blogCateRoutes from '@/routes/blog-cate.route'
-import blogRoutes from '@/routes/blog.route'
 import { handleSeedData } from '@/seed/main'
-import blogCommentRoutes from '@/routes/blog-comment.route'
-import blogEmotionRoutes from '@/routes/blog-emotion.route'
+import * as routes from '@/routes'
 
-const fastify = Fastify({
-  logger: true
-})
+const fastify = Fastify({ logger: true })
 
-// Run the server!
+const registerPlugins = (app: FastifyInstance) => {
+  app.register(cors, { origin: ['*'], credentials: true })
+  app.register(fastifyAuth, { defaultRelation: 'and' })
+  app.register(fastifyHelmet, {
+    crossOriginResourcePolicy: { policy: 'cross-origin' }
+  })
+  app.register(fastifyCookie)
+  app.register(validatorCompilerPlugin)
+  app.register(errorHandlerPlugin)
+  app.register(socketIOPlugin)
+}
+
+const registerRoutes = (app: FastifyInstance) => {
+  fastify.get('/seed', async () => await handleSeedData())
+
+  const routeDefinitions = [
+    { route: routes.authRoutes, prefix: '/auth' },
+    { route: routes.accountRoutes, prefix: '/account' },
+    { route: routes.mediaRoutes, prefix: '/media' },
+    { route: routes.staticRoutes, prefix: '/static' },
+    { route: routes.productRoutes, prefix: '/products' },
+    { route: routes.blogCateRoutes, prefix: '/blog-category' },
+    { route: routes.blogRoutes, prefix: '/blog' },
+    { route: routes.blogCommentRoutes, prefix: '/blog-comment' },
+    { route: routes.blogEmotionRoutes, prefix: '/blog-emotion' },
+    { route: routes.testRoutes, prefix: '/test' },
+  ]
+
+  routeDefinitions.forEach(({ route, prefix }) => app.register(route, { prefix }))
+
+}
+
 const start = async () => {
   try {
     createFolder(path.resolve(envConfig.UPLOAD_FOLDER))
-    const whitelist = ['*']
-    fastify.register(cors, {
-      origin: whitelist, // Cho phép tất cả các domain gọi API
-      credentials: true // Cho phép trình duyệt gửi cookie đến server
-    })
 
-    fastify.register(fastifyAuth, {
-      defaultRelation: 'and'
-    })
-    fastify.register(fastifyHelmet, {
-      crossOriginResourcePolicy: {
-        policy: 'cross-origin'
-      }
-    })
-    fastify.register(fastifyCookie)
-    fastify.register(validatorCompilerPlugin)
-    fastify.register(errorHandlerPlugin)
-    fastify.register(authRoutes, {
-      prefix: '/auth'
-    })
-    fastify.register(accountRoutes, {
-      prefix: '/account'
-    })
-    fastify.register(mediaRoutes, {
-      prefix: '/media'
-    })
-    fastify.register(staticRoutes, {
-      prefix: '/static'
-    })
-    fastify.register(productRoutes, {
-      prefix: '/products'
-    })
-    fastify.register(blogCateRoutes, {
-      prefix: '/blog-category'
-    })
-    fastify.register(blogRoutes, {
-      prefix: '/blog'
-    })
-    fastify.register(blogCommentRoutes, {
-      prefix: '/blog-comment'
-    })
-    fastify.register(blogEmotionRoutes, {
-      prefix: '/blog-emotion'
-    })
-    fastify.register(testRoutes, {
-      prefix: '/test'
-    })
-    fastify.get('/seed', async () => {
-      await handleSeedData()
-    })
+    registerPlugins(fastify)
+    registerRoutes(fastify)
+
+
     await fastify.listen({
       port: envConfig.PORT,
       host: envConfig.IS_PRODUCTION ? '0.0.0.0' : 'localhost'
     })
+
     console.log(`Server đang chạy dưới local tại: ${API_URL}`)
     if (envConfig.IS_PRODUCTION) {
       console.log(`Đang ở mode production với domain: ${envConfig.PRODUCTION_URL}`)
@@ -92,4 +71,5 @@ const start = async () => {
     process.exit(1)
   }
 }
+
 start()

@@ -1,4 +1,4 @@
-import { createBlog, deleteBlog, getBlogList, updateBlog } from '@/controllers/blog.controller'
+import { createBlog, deleteBlog, getBlogDetail, getBlogList, updateBlog } from '@/controllers/blog.controller'
 import { requireLoginedHook } from '@/hooks/auth.hooks'
 import { AccountRes } from '@/schemaValidations/account.schema'
 import { UpdateBlogCateBody } from '@/schemaValidations/blog-category.schema'
@@ -10,7 +10,9 @@ import {
   BlogPageRes,
   BlogSchema,
   UpdateBlogBodyType,
-  UpdateBlogBody
+  UpdateBlogBody,
+  BlogParamsType,
+  BlogParams
 } from '@/schemaValidations/blog.schema'
 import { MessageRes, MessageResType } from '@/schemaValidations/common.schema'
 import PageResponse, { PageRes } from '@/types/page.response.type'
@@ -44,6 +46,29 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
       })
     }
   )
+
+  fastify.get<{
+    Params: BlogParamsType
+    Reply: BlogResType
+  }>(
+    '/:id',
+    {
+      schema: {
+        params: BlogParams,
+        response: {
+          200: BlogRes
+        }
+      }
+    },
+    async (request, reply) => {
+      const data = await getBlogDetail(request.params.id)
+      reply.send({
+        data,
+        message: 'Lấy thông tin sản phẩm thành công!'
+      })
+    }
+  )
+
 
   fastify.get<{
     Querystring: Record<string, any>,
