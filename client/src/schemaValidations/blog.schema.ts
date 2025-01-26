@@ -2,17 +2,6 @@ import z from 'zod'
 
 
 export const CreateBlogBody = z.object({
-  title: z.string().min(16, "ít nhất 16 kí tự").max(256),
-  content: z.string().min(1),
-  categoryIds: z.preprocess(
-    (val) => (val instanceof Set ? Array.from(val) : val),
-    z.array(z.string())
-  ),
-  image: z.string().url(),
-  description: z.string().min(30).optional()
-})
-
-export const DemoBody = z.object({
   title: z.string()
     .min(16, "Tiêu đề phải có ít nhất 16 ký tự")
     .max(256, "Tiêu đề không được vượt quá 256 ký tự"),
@@ -27,10 +16,7 @@ export const DemoBody = z.object({
   ),
   content: z.string().min(16),
   image: z.string().url().optional(),
-});
-export type DemoBodyType = z.TypeOf<typeof DemoBody>
-
-
+})
 
 export type CreateBlogBodyType = z.TypeOf<typeof CreateBlogBody>
 
@@ -39,6 +25,8 @@ export const BlogSchema = z.object({
   title: z.string(),
   content: z.string(),
   views: z.number(),
+  description: z.string().nullable(),
+  image: z.string().nullable(),
   categories: z.array(z.object({
     id: z.string(),
     name: z.string(),

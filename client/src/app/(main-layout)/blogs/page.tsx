@@ -16,15 +16,13 @@ export default async function BlogListPage() {
         <div className='space-y-3 mx-2'>
             <h1 className='text-center'>Blogs List</h1>
             <div className="flex gap-2">
-                <div className='flex justify-around gap-2 flex-wrap  w-4/5'>
+                <div className='w-4/5'>
                     <BlogList></BlogList>
                 </div>
                 <div className='border-2 flex flex-1 rounded-sm'>
                     <h1 className='mx-auto'>Panel</h1>
                 </div>
             </div>
-
-
         </div>
     )
 }

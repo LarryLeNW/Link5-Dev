@@ -14,7 +14,7 @@ import productApiRequest from "@/apiRequests/product";
 import { useToast } from "@/components/ui/use-toast";
 import blogApiRequest from "@/apiRequests/blog";
 import { useForm } from "react-hook-form";
-import { CreateBlogBody, CreateBlogBodyType, DemoBody, DemoBodyType } from "@/schemaValidations/blog.schema";
+import { CreateBlogBody, CreateBlogBodyType } from "@/schemaValidations/blog.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Button } from "@/components/ui/button";
@@ -31,8 +31,8 @@ function BlogFormWrite() {
     const [progress, setProgress] = useState(0);
 
     const [blogCategories, setBlogCategories] = useState<BlogCateListResType["data"]>([])
-    const form = useForm<DemoBodyType>({
-        resolver: zodResolver(DemoBody),
+    const form = useForm<CreateBlogBodyType>({
+        resolver: zodResolver(CreateBlogBody),
         defaultValues: {
             title: "Đây là blog mới của tôi hehehee..e..",
             description: "đây là mô tả blog mới của tôi heheheheh . .."
@@ -67,7 +67,7 @@ function BlogFormWrite() {
     //   return <div className="">You should login!</div>;
     // }
 
-    const onSubmit = async (values: DemoBodyType) => {
+    const onSubmit = async (values: CreateBlogBodyType) => {
         setIsLoading(true)
         try {
             const result = await blogApiRequest.create({ ...values, image: cover });
