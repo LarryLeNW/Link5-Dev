@@ -16,26 +16,44 @@ export const createBlogComment = async (data: CreateBlogCommentBodyType): Promis
 };
 
 export const getBlogCommentList = async (params: Record<string, any>): Promise<PageResponse<z.infer<typeof BlogCommentSchema>>> => {
-  const { page = 1, pageSize = 10 } = {
-    page: parseInt(params.page, 10) || 1,
-    pageSize: parseInt(params.pageSize, 10) || 10,
-  };
-  const skip = (+page - 1) * +pageSize;
-  const take = pageSize;
+  const { page = 1, pageSize = 10, sortBy = 'createdAt', sortOrder = 'desc' } = params;
 
-  const totalCount = await prisma.commentBlog.count();
+  const whereCondition: Record<string, any> = {
+    ...(params.blogId && { blogId: params.blogId }),
+  };
+
+  if (params.parentId !== undefined) {
+    whereCondition.parentId = params.parentId;
+  } else {
+    whereCondition.OR = [
+      { parentId: null },
+      { parentId: { not: { isSet: true } } },
+    ]
+  }
+
+  const totalCount = await prisma.commentBlog.count({
+    where: whereCondition,
+  });
 
   const result = await prisma.commentBlog.findMany({
-    skip,
-    take,
+    skip: (+page - 1) * +pageSize,
+    take: +pageSize,
+    where: whereCondition,
     orderBy: {
-      createdAt: 'desc',
+      [sortBy]: sortOrder,
     },
     include: {
       postBy: { select: { id: true, name: true, avatar: true } },
       _count: {
-        select: { replies: true, emotions: true },
+        select: {
+          replies: true,
+        },
       },
+      emotions: {
+        select: { id: true, type: true, postBy: { select: { name: true, avatar: true, id: true } } }, take: 10, orderBy: {
+          createdAt: "desc"
+        }
+      }
     },
   });
 

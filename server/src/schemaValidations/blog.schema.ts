@@ -31,6 +31,10 @@ export const BlogSchema = z.object({
     name: z.string(),
   })).optional(),
   postBy: z.object({ id: z.string(), name: z.string() }),
+  emotions: z.object({
+    total: z.number(),
+    types: z.array(z.string())
+  }).optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 })

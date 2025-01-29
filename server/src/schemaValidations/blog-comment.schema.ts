@@ -19,10 +19,14 @@ export const BlogCommentSchema = z.object({
   }),
   emotions: z.array(z.object({
     id: z.string(),
-    postBy: z.object({ id: z.string(), name: z.string().optional(), avatar: z.string().url().optional() }),
     type: z.string(),
+    postBy: z.object({
+      id: z.string(),
+      name: z.string(),
+      avatar: z.string().nullable()
+    }),
   })).optional(),
-  _count: z.lazy(() => z.object({ replies: z.number(), emotions: z.number() })).optional(),
+  _count: z.lazy(() => z.object({ replies: z.number() })).optional(),
   createdAt: z.date(),
   updatedAt: z.date()
 })

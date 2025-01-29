@@ -130,7 +130,21 @@ export const getBlogDetail = async (id: string) => {
     ...result,
     categories: result.categories?.map((relation) => relation.category),
     tags: result.tags?.map((relation) => relation.tag),
-  }))
+  })).then(async (res) => {
+    const emotionStats = await prisma.emotionBlog.groupBy({
+      by: ['type'],
+      where: {
+        blogId: id
+      },
+      _count: {
+        type: true
+      }
+    });
+
+    const total = emotionStats.reduce((total, emotion) => total + emotion._count.type, 0);
+    const types = emotionStats.map((emotion) => emotion.type);
+    return { ...res, emotions: { total, types } }
+  })
 }
 
 export const deleteBlog = (blogId: string) => {
