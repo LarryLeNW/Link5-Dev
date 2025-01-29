@@ -6,6 +6,7 @@ import {
   ProductResType,
   UpdateProductBodyType
 } from '@/schemaValidations/product.schema'
+import ROUTE_API from "@/constant/route.api"
 
 const productApiRequest = {
   getList: () => http.get<ProductListResType>('/products'),
