@@ -3,7 +3,6 @@ import z from 'zod'
 export const CreateBlogCommentBody = z.object({
   content: z.string().min(1).max(256),
   blogId: z.string(),
-  postById: z.string(),
   parentId: z.string().optional(),
 })
 
@@ -32,7 +31,7 @@ export const BlogCommentSchema = z.object({
 })
 
 export const BlogCommentRes = z.object({
-  data: BlogCommentSchema,
+  data: BlogCommentSchema.optional(),
   message: z.string()
 })
 

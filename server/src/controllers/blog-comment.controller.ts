@@ -1,11 +1,12 @@
 import prisma from '@/database';
+import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogCommentSchema, CreateBlogCommentBodyType, BlogCommentResType } from '@/schemaValidations/blog-comment.schema';
 import PageResponse, { PageRes } from '@/types/page.response.type';
 import z from 'zod';
 
-export const createBlogComment = async (data: CreateBlogCommentBodyType): Promise<BlogCommentResType['data']> => {
+export const createBlogComment = async (data: CreateBlogCommentBodyType, account: AccountResType["data"]): Promise<BlogCommentResType['data']> => {
   const result = await prisma.commentBlog.create({
-    data,
+    data: { ...data, postById: account.id },
     include: {
       postBy: { select: { id: true, name: true, avatar: true } },
       parent: { select: { id: true, content: true } },
@@ -19,17 +20,14 @@ export const getBlogCommentList = async (params: Record<string, any>): Promise<P
   const { page = 1, pageSize = 10, sortBy = 'createdAt', sortOrder = 'desc' } = params;
 
   const whereCondition: Record<string, any> = {
+    ...(params.parentId ? { parentId: params.parentId } : {
+      OR: [
+        { parentId: null },
+        { parentId: { not: { isSet: true } } },
+      ]
+    }),
     ...(params.blogId && { blogId: params.blogId }),
   };
-
-  if (params.parentId !== undefined) {
-    whereCondition.parentId = params.parentId;
-  } else {
-    whereCondition.OR = [
-      { parentId: null },
-      { parentId: { not: { isSet: true } } },
-    ]
-  }
 
   const totalCount = await prisma.commentBlog.count({
     where: whereCondition,
@@ -59,8 +57,8 @@ export const getBlogCommentList = async (params: Record<string, any>): Promise<P
 
   return {
     totalCount,
-    totalPages: Math.ceil(totalCount / pageSize),
-    currentPage: page,
+    totalPages: Math.ceil(totalCount / +pageSize),
+    currentPage: +page,
     pageSize,
     data: result,
     message: 'Lấy bình luận thành công',

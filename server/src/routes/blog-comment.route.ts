@@ -17,11 +17,14 @@ export default async function blogCommentRoutes(fastify: FastifyInstance, option
                 response: {
                     200: BlogCommentRes
                 }
-            }
-            //   preValidation: fastify.auth([])
+            },
+            preValidation: fastify.auth([requireLoginedHook])
         },
         async (request, reply) => {
-            const data = await createBlogComment(request.body)
+            if (!request.account) {
+                return reply.status(401).send({ message: "Not Permission Denied" })
+            }
+            const data = await createBlogComment(request.body, request.account)
             reply.send({
                 data: data,
                 message: 'Bình luận thành công!'
