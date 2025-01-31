@@ -69,7 +69,7 @@ export default async function ProductDetail(props: Props) {
               <div className='flex justify-between gap-4 items-center'>
                 <div className='flex gap-2'>
                   <Image
-                    src={faker.image.avatar()}
+                    src={"/avatar-default.jpg"}
                     alt={blog.postBy.name}
                     width={180}
                     height={180}

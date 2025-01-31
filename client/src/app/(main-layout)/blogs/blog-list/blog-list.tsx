@@ -29,7 +29,7 @@ export default function BlogList() {
                 <Link href={`/blogs/${blog.id}`} className='border w-full px-8 py-2 rounded gap-2 flex flex-col ' key={blog.id}>
                     <div className='flex justify-between items-center'>
                         <div className='flex gap-2'>
-                            <Image src={faker.image.avatar()} width={180} height={180} alt='avatar' className='w-14 h-14 rounded-full'></Image>
+                            <Image src={"/avatar-default.jpg"} width={180} height={180} alt='avatar' className='w-14 h-14 rounded-full'></Image>
                             <div className='flex flex-col gap-2'>
                                 <div className='flex gap-2 items-center'>
                                     <p>{blog.postBy.name}</p>
