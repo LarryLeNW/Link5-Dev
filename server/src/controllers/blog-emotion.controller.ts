@@ -1,13 +1,14 @@
 import prisma from '@/database';
+import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogEmotionResType, BlogEmotionSchema, CreateBlogEmotionBodyType } from '@/schemaValidations/blog-emotions.schema';
 import PageResponse from '@/types/page.response.type';
 import z from 'zod';
 
 
-export const createBlogEmotion = async (data: CreateBlogEmotionBodyType): Promise<BlogEmotionResType['data']> => {
+export const createBlogEmotion = async (data: CreateBlogEmotionBodyType, account: AccountResType["data"]): Promise<BlogEmotionResType['data']> => {
 
   const result = await prisma.emotionBlog.create({
-    data,
+    data: { ...data, postById: account.id },
     include: {
       postBy: { select: { id: true, name: true, avatar: true } },
     },

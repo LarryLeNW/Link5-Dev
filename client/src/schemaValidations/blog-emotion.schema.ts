@@ -27,7 +27,7 @@ export const BlogEmotionSchema = z.object({
 })
 
 export const BlogEmotionRes = z.object({
-  data: BlogEmotionSchema.optional(),
+  data: BlogEmotionSchema,
   message: z.string()
 })
 

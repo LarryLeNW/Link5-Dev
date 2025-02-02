@@ -44,3 +44,5 @@ export const normalizePath = (path: string) => {
 export const decodeJWT = <Payload = any>(token: string) => {
   return jwt.decode(token) as Payload
 }
+
+
