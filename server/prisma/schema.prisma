@@ -21,6 +21,57 @@ model Account {
   blogComments CommentBlog[] @relation("AccountCommentBlog")
   blogEmotions EmotionBlog[] @relation("AccountBlogEmotions")
   role         String        @default("User")
+  
+  followers     Follow[] @relation("UserFollowers")
+  following     Follow[] @relation("UserFollowing")
+
+  sentFriendRequests     Friendship[] @relation("FriendshipSender")
+  receivedFriendRequests Friendship[] @relation("FriendshipReceiver")
+  
+  profile Profile?
+}
+
+model Profile {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  firstName     String
+  lastName      String
+  avatar        String?
+  coverPhoto    String?
+  bio           String?
+  birthday      DateTime?
+  location      String?
+  createdAt     DateTime @default(now())
+  account       Account   @relation(fields: [accountId], references: [id])
+  accountId String @unique @db.ObjectId 
+}
+
+model Follow {
+  id          String  @id @default(auto()) @map("_id") @db.ObjectId
+  followerId  String  @db.ObjectId
+  followingId String  @db.ObjectId
+  createdAt   DateTime @default(now())
+
+  follower   Account @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following  Account @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])  
+  @@index([followerId])
+  @@index([followingId])
+}
+
+model Friendship {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  senderId   String   @db.ObjectId
+  receiverId String   @db.ObjectId
+  status     String   @default("pending") 
+  createdAt  DateTime @default(now())
+
+  sender   Account @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver Account @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+
+  @@unique([senderId, receiverId])
+  @@index([senderId])
+  @@index([receiverId])
 }
 
 model Session {
@@ -115,6 +166,7 @@ model EmotionBlog {
   comment   CommentBlog? @relation("CommentBlogEmotions", fields: [commentId], references: [id], onDelete: Cascade)
   postById  String      @db.ObjectId
   postBy    Account     @relation("AccountBlogEmotions", fields: [postById], references: [id], onDelete: Cascade)
+  @@unique([blogId, postById])
   createdAt DateTime    @default(now())
   updatedAt DateTime      @updatedAt
 }

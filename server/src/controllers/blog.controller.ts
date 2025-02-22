@@ -1,8 +1,27 @@
+import { postByQuery } from '@/controllers/queryCommon';
 import prisma from '@/database';
 import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogSchema, CreateBlogBodyType, UpdateBlogBodyType } from '@/schemaValidations/blog.schema';
 import PageResponse from '@/types/page.response.type';
 import z from 'zod';
+
+const blogSelectQuery = {
+  id: true,
+  title: true,
+  content: true,
+  description: true,
+  image: true,
+  views: true,
+  createdAt: true,
+  updatedAt: true,
+  postBy: { select: { id: true, name: true } },
+  categories: {
+    select: {
+      category: { select: { id: true, name: true } }
+    }
+  },
+  tags: { select: { tag: { select: { id: true, name: true } } } },
+}
 
 export const createBlog = async (data: CreateBlogBodyType, account: AccountResType["data"]) => {
   const tagIds = await Promise.all(
@@ -69,23 +88,7 @@ export const getBlogList = async (params: Record<string, any>): Promise<PageResp
     orderBy: {
       [params.sortBy || "createdAt"]: params.sortOrder || "desc",
     },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      description: true,
-      image: true,
-      views: true,
-      createdAt: true,
-      updatedAt: true,
-      postBy: { select: { id: true, name: true } },
-      categories: {
-        select: {
-          category: { select: { id: true, name: true } }
-        }
-      },
-      tags: { select: { tag: { select: { id: true, name: true } } } },
-    },
+    select: blogSelectQuery,
   });
 
   const formattedBlogs = blogs.map((blog) => ({
@@ -109,23 +112,7 @@ export const getBlogDetail = async (id: string) => {
     where: {
       id
     },
-    select: {
-      id: true,
-      title: true,
-      content: true,
-      description: true,
-      image: true,
-      views: true,
-      createdAt: true,
-      updatedAt: true,
-      postBy: { select: { id: true, name: true } },
-      categories: {
-        select: {
-          category: { select: { id: true, name: true } }
-        }
-      },
-      tags: { select: { tag: { select: { id: true, name: true } } } },
-    },
+    select: blogSelectQuery,
   }).then(result => ({
     ...result,
     categories: result.categories?.map((relation) => relation.category),
@@ -207,7 +194,7 @@ export const updateBlog = async (id: string, data: UpdateBlogBodyType) => {
       include: {
         categories: { select: { category: { select: { id: true, name: true } } } },
         tags: { select: { tag: { select: { id: true, name: true } } } },
-        postBy: true,
+        postBy: postByQuery,
       },
     }).then(blogUpdate => (
       {

@@ -1,21 +1,52 @@
+import { postByQuery } from '@/controllers/queryCommon';
 import prisma from '@/database';
 import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogEmotionResType, BlogEmotionSchema, CreateBlogEmotionBodyType } from '@/schemaValidations/blog-emotions.schema';
 import PageResponse from '@/types/page.response.type';
 import z from 'zod';
 
+export const createOrUpdateBlogEmotion = async (
+  data: CreateBlogEmotionBodyType,
+  account: AccountResType["data"]
+): Promise<BlogEmotionResType["data"]> => {
+  const { blogId, type, commentId } = data;
+  const postById = account.id;
 
-export const createBlogEmotion = async (data: CreateBlogEmotionBodyType, account: AccountResType["data"]): Promise<BlogEmotionResType['data']> => {
+  const whereCondition = { postById, ...(blogId && { blogId }), ...(commentId && { commentId }) };
 
-  const result = await prisma.emotionBlog.create({
-    data: { ...data, postById: account.id },
-    include: {
-      postBy: { select: { id: true, name: true, avatar: true } },
-    },
+  const existingEmotion = await prisma.emotionBlog.findFirst({
+    where: whereCondition,
+    include: { postBy: postByQuery },
   });
 
-  return BlogEmotionSchema.parse(result);
+  if (!!existingEmotion) {
+    if (existingEmotion.type === type) return formatEmotion(existingEmotion);
+
+    return updateBlogEmotion(existingEmotion.id, type);
+  }
+  return createBlogEmotion(data, postById);
 };
+
+const updateBlogEmotion = async (id: string, newType: string) => {
+  const emotion = await prisma.emotionBlog.update({
+    where: { id },
+    data: { type: newType },
+    include: { postBy: postByQuery },
+  });
+
+  return formatEmotion(emotion);
+};
+
+const createBlogEmotion = async (data: CreateBlogEmotionBodyType, postById: string) => {
+  const emotion = await prisma.emotionBlog.create({
+    data: { ...data, postById },
+    include: { postBy: postByQuery },
+  });
+
+  return formatEmotion(emotion);
+};
+
+const formatEmotion = (emotion: any) => BlogEmotionSchema.parse(emotion);
 
 export const getBlogEmotionList = async (params: Record<string, any>): Promise<PageResponse<z.infer<typeof BlogEmotionSchema>>> => {
   const page = parseInt(params.page, 10) || 1;
@@ -36,7 +67,7 @@ export const getBlogEmotionList = async (params: Record<string, any>): Promise<P
         createdAt: 'desc',
       },
       include: {
-        postBy: { select: { id: true, name: true, avatar: true } },
+        postBy: postByQuery,
       },
     }),
     prisma.emotionBlog.count({
@@ -56,3 +87,25 @@ export const getBlogEmotionList = async (params: Record<string, any>): Promise<P
     message: 'Lấy cảm xúc bài viết thành công',
   };
 };
+
+export const getBlogEmotionDetail = async (params: Record<string, any>, account: AccountResType["data"]) => {
+  const { blogId, commentId } = params;
+
+  const whereCondition = {
+    postById: account.id,
+    ...(blogId && { blogId }),
+    ...(commentId && { commentId })
+  };
+
+  return await prisma.emotionBlog.findFirst({
+    where: whereCondition
+  })
+}
+
+export const deleteBlogEmotion = async (id: string) => {
+  return await prisma.emotionBlog.delete({
+    where: {
+      id
+    }
+  })
+}

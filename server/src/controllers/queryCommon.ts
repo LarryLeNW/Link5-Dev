@@ -1,0 +1,1 @@
+export const postByQuery = { select: { id: true, name: true, avatar: true } }

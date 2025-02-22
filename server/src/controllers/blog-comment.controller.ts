@@ -1,3 +1,4 @@
+import { postByQuery } from '@/controllers/queryCommon';
 import prisma from '@/database';
 import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogCommentSchema, CreateBlogCommentBodyType, BlogCommentResType } from '@/schemaValidations/blog-comment.schema';
@@ -8,7 +9,7 @@ export const createBlogComment = async (data: CreateBlogCommentBodyType, account
   const result = await prisma.commentBlog.create({
     data: { ...data, postById: account.id },
     include: {
-      postBy: { select: { id: true, name: true, avatar: true } },
+      postBy: postByQuery,
       parent: { select: { id: true, content: true } },
     },
   });
@@ -41,14 +42,16 @@ export const getBlogCommentList = async (params: Record<string, any>): Promise<P
       [sortBy]: sortOrder,
     },
     include: {
-      postBy: { select: { id: true, name: true, avatar: true } },
+      postBy: postByQuery,
       _count: {
         select: {
           replies: true,
         },
       },
       emotions: {
-        select: { id: true, type: true, postBy: { select: { name: true, avatar: true, id: true } } }, take: 10, orderBy: {
+        select: {
+          id: true, type: true, postBy: postByQuery
+        }, take: 10, orderBy: {
           createdAt: "desc"
         }
       }
