@@ -46,3 +46,15 @@ export const decodeJWT = <Payload = any>(token: string) => {
 }
 
 
+
+
+
+export const convertTypeEmotionToUI = (text: string): string | null => {
+  if (text === "dislike") return "👎";
+  if (text === "like") return "👍";
+  if (text === "love") return "❤️";
+  if (text === "wow") return "😯"
+  if (text === "sad") return "😢"
+  if (text === "agree") return "😠"
+  return null;
+};

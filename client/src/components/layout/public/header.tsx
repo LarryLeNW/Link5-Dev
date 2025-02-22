@@ -25,17 +25,19 @@ export default function Header() {
           <Link href='/'>Trang chủ</Link>
         </li>
         <li>
-          <Link href='/products'>Sản phẩm</Link>
+          <Link href='/friends'>Bạn bè</Link>
         </li>
         <li>
           <Link href='/blogs'>Blogs</Link>
         </li>
-
+        <li>
+          <Link href='/about'>Về chúng tôi</Link>
+        </li>
         {user ? (
           <>
             <li>
               <Link href={'/me'}>
-                Xin chào <strong>{user.name}</strong>
+                <strong>{user.name}</strong>
               </Link>
             </li>
             <li>
