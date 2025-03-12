@@ -121,7 +121,7 @@ const RegisterForm = () => {
             </FormItem>
           )}
         />
-        <Button type='submit' className='!mt-8 w-full'>
+        <Button type='submit' className='!mt-8 w-full bg-yellow-900'>
           Đăng ký
         </Button>
       </form>
@@ -130,3 +130,24 @@ const RegisterForm = () => {
 }
 
 export default RegisterForm
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

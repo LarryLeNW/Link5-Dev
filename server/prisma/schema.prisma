@@ -9,52 +9,57 @@ datasource db {
 }
 
 model Account {
-  id           String        @id @default(auto()) @map("_id") @db.ObjectId
-  email        String        @unique
-  name         String
-  avatar       String?
-  password     String
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @updatedAt
-  Session      Session[]
-  blogs        Blog[]        @relation("AccountBlogs")
-  blogComments CommentBlog[] @relation("AccountCommentBlog")
-  blogEmotions EmotionBlog[] @relation("AccountBlogEmotions")
-  role         String        @default("User")
-  
-  followers     Follow[] @relation("UserFollowers")
-  following     Follow[] @relation("UserFollowing")
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  email    String @unique
+  password String
 
-  sentFriendRequests     Friendship[] @relation("FriendshipSender")
-  receivedFriendRequests Friendship[] @relation("FriendshipReceiver")
-  
+  status    String   @default("pending") 
+  isVerified Boolean @default(false) 
+  verificationToken String?
+  verificationTokenExpiresAt DateTime?  
+
+  Session      Session[]
+  role         String        @default("User")
+
   profile Profile?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Profile {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  firstName     String
-  lastName      String
-  avatar        String?
-  coverPhoto    String?
-  bio           String?
-  birthday      DateTime?
-  location      String?
-  createdAt     DateTime @default(now())
-  account       Account   @relation(fields: [accountId], references: [id])
-  accountId String @unique @db.ObjectId 
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  lastName   String
+  avatar     String?
+  coverPhoto String?
+  bio        String?
+  birthday   DateTime?
+  location   String?
+  createdAt  DateTime  @default(now())
+  account    Account   @relation(fields: [accountId], references: [id])
+  accountId  String    @unique @db.ObjectId
+  blogs      Blog[]    @relation("ProfileBlogs")
+  comments   CommentBlog[] @relation("ProfileCommentBlog")
+  emotions   EmotionBlog[] @relation("ProfileBlogEmotions")
+
+  followers Follow[] @relation("UserFollowers")
+  following Follow[] @relation("UserFollowing")
+
+  sentFriendRequests     Friendship[] @relation("FriendshipSender")
+  receivedFriendRequests Friendship[] @relation("FriendshipReceiver")
 }
 
 model Follow {
-  id          String  @id @default(auto()) @map("_id") @db.ObjectId
-  followerId  String  @db.ObjectId
-  followingId String  @db.ObjectId
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  followerId  String   @db.ObjectId
+  followingId String   @db.ObjectId
   createdAt   DateTime @default(now())
 
-  follower   Account @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
-  following  Account @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
+  follower  Profile @relation("UserFollowers", fields: [followerId], references: [id], onDelete: Cascade)
+  following Profile @relation("UserFollowing", fields: [followingId], references: [id], onDelete: Cascade)
 
-  @@unique([followerId, followingId])  
+  @@unique([followerId, followingId])
   @@index([followerId])
   @@index([followingId])
 }
@@ -63,11 +68,11 @@ model Friendship {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
   senderId   String   @db.ObjectId
   receiverId String   @db.ObjectId
-  status     String   @default("pending") 
+  status     String   @default("pending")
   createdAt  DateTime @default(now())
 
-  sender   Account @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
-  receiver Account @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  sender   Profile @relation("FriendshipSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver Profile @relation("FriendshipReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
 
   @@unique([senderId, receiverId])
   @@index([senderId])
@@ -113,7 +118,7 @@ model BlogToCategory {
   id         String       @id @default(auto()) @map("_id") @db.ObjectId
   blogId     String       @db.ObjectId
   categoryId String       @db.ObjectId
-  blog       Blog         @relation(fields: [blogId], references: [id],onDelete: Cascade)
+  blog       Blog         @relation(fields: [blogId], references: [id], onDelete: Cascade)
   category   BlogCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 }
 
@@ -121,25 +126,25 @@ model BlogToTag {
   id     String  @id @default(auto()) @map("_id") @db.ObjectId
   blogId String  @db.ObjectId
   tagId  String  @db.ObjectId
-  blog   Blog    @relation(fields: [blogId], references: [id] , onDelete: Cascade)
-  tag    TagBlog @relation(fields: [tagId], references: [id] , onDelete: Cascade)
+  blog   Blog    @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  tag    TagBlog @relation(fields: [tagId], references: [id], onDelete: Cascade)
 }
 
 model Blog {
-  id         String           @id @default(auto()) @map("_id") @db.ObjectId
-  title      String
-  content    String
+  id          String           @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  content     String
   description String?
   image       String?
-  views      Int           @default(0)
-  categories BlogToCategory[] 
-  tags       BlogToTag[]
-  comments   CommentBlog[]    @relation("BlogToCommentBlog")
-  postById   String           @db.ObjectId
-  postBy     Account          @relation("AccountBlogs", fields: [postById], references: [id])
-  emotions   EmotionBlog[]    @relation("BlogEmotions")
-  createdAt  DateTime         @default(now())
-  updatedAt  DateTime         @updatedAt
+  views       Int              @default(0)
+  categories  BlogToCategory[]
+  tags        BlogToTag[]
+  comments    CommentBlog[]    @relation("BlogToCommentBlog")
+  postById    String          @db.ObjectId
+  postBy      Profile         @relation("ProfileBlogs", fields: [postById], references: [id])
+  emotions    EmotionBlog[]    @relation("BlogEmotions")
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
 
 model CommentBlog {
@@ -148,7 +153,7 @@ model CommentBlog {
   blogId    String        @db.ObjectId
   blog      Blog          @relation("BlogToCommentBlog", fields: [blogId], references: [id], onDelete: Cascade)
   postById  String        @db.ObjectId
-  postBy    Account       @relation("AccountCommentBlog", fields: [postById], references: [id], onDelete: Cascade)
+  postBy    Profile       @relation("ProfileCommentBlog", fields: [postById], references: [id], onDelete: Cascade)
   parentId  String?       @db.ObjectId
   parent    CommentBlog?  @relation("CommentBlogReplies", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   replies   CommentBlog[] @relation("CommentBlogReplies")
@@ -158,15 +163,16 @@ model CommentBlog {
 }
 
 model EmotionBlog {
-  id        String      @id @default(auto()) @map("_id") @db.ObjectId
+  id        String       @id @default(auto()) @map("_id") @db.ObjectId
   type      String
   blogId    String?      @db.ObjectId
   blog      Blog?        @relation("BlogEmotions", fields: [blogId], references: [id], onDelete: Cascade)
   commentId String?      @db.ObjectId
   comment   CommentBlog? @relation("CommentBlogEmotions", fields: [commentId], references: [id], onDelete: Cascade)
-  postById  String      @db.ObjectId
-  postBy    Account     @relation("AccountBlogEmotions", fields: [postById], references: [id], onDelete: Cascade)
+  postById  String       @db.ObjectId
+  postBy    Profile      @relation("ProfileBlogEmotions", fields: [postById], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+
   @@unique([blogId, postById])
-  createdAt DateTime    @default(now())
-  updatedAt DateTime      @updatedAt
 }

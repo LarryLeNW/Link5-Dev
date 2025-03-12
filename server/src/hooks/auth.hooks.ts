@@ -14,7 +14,11 @@ export const requireLoginedHook = async (request: FastifyRequest) => {
       token: sessionToken as string
     },
     include: {
-      account: true
+      account: {
+        include: {
+          profile: true,
+        }
+      }
     }
   })
   if (!session_row) throw new AuthError('Session Token không tồn tại')

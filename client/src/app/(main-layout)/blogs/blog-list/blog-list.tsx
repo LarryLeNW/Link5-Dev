@@ -33,7 +33,7 @@ export default function BlogList() {
                             <div className='flex flex-col gap-2'>
                                 <div className='flex gap-2 items-center'>
                                     <p>{blog.postBy.name}</p>
-                                    {blog.categories?.map(cate => <Chip size='sm' key={cate.id}>{cate.name}</Chip>)}
+                                    {blog.categories?.map(item => <Chip size='sm' key={item.category.id}>{item.category.name}</Chip>)}
                                 </div>
                                 <p className='text-sm'>{moment(blog.createdAt).format("DD/MM/YYYY hh:mm:ss")}</p>
                             </div>

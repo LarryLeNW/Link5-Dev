@@ -4,26 +4,59 @@ import { AccountResType } from '@/schemaValidations/account.schema';
 import { BlogSchema, CreateBlogBodyType, UpdateBlogBodyType } from '@/schemaValidations/blog.schema';
 import PageResponse from '@/types/page.response.type';
 import z from 'zod';
+import { Prisma } from '@prisma/client';
 
 const blogSelectQuery = {
-  id: true,
-  title: true,
-  content: true,
-  description: true,
-  image: true,
-  views: true,
-  createdAt: true,
-  updatedAt: true,
-  postBy: { select: { id: true, name: true } },
-  categories: {
-    select: {
-      category: { select: { id: true, name: true } }
+  select: {
+    id: true,
+    title: true,
+    content: true,
+    description: true,
+    image: true,
+    views: true,
+    postById: true,
+    createdAt: true,
+    updatedAt: true,
+    postBy: {
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        avatar: true,
+        coverPhoto: true,
+        bio: true,
+        birthday: true,
+        location: true,
+        createdAt: true,
+        accountId: true,
+        account: {
+          select: {
+            id: true,
+            email: true
+          }
+        }
+      }
+    },
+    categories: {
+      select: {
+        category: {
+          select: {
+            id: true,
+            name: true
+          }
+        }
+      }
     }
-  },
-  tags: { select: { tag: { select: { id: true, name: true } } } },
-}
+  }
+} as const;
+
+type BlogWithRelations = Prisma.BlogGetPayload<typeof blogSelectQuery>;
 
 export const createBlog = async (data: CreateBlogBodyType, account: AccountResType["data"]) => {
+  if (!account.profile?.id) {
+    throw new Error("Profile not found");
+  }
+
   const tagIds = await Promise.all(
     (data.tags || []).map(async (name) => {
       const tag = await prisma.tagBlog.upsert({
@@ -36,11 +69,13 @@ export const createBlog = async (data: CreateBlogBodyType, account: AccountResTy
     })
   );
 
-  return prisma.blog.create({
+  const blog = await prisma.blog.create({
     data: {
       title: data.title,
       content: data.content,
-      postById: account.id,
+      description: data.description,
+      image: data.image,
+      postById: account.profile.id,
       categories: {
         create: data.categoryIds.map((categoryId) => ({
           category: { connect: { id: categoryId } },
@@ -52,25 +87,16 @@ export const createBlog = async (data: CreateBlogBodyType, account: AccountResTy
         })),
       }
     },
-    include: {
-      categories: { select: { category: { select: { id: true, name: true } } } },
-      tags: { select: { tag: { select: { id: true, name: true } } } },
-      postBy: true,
-    },
-  }).then(blogCreated =>
-  ({
-    ...blogCreated,
-    categories: blogCreated.categories.map((relation) => ({
-      id: relation.category.id,
-      name: relation.category.name,
-    })),
-    tags: blogCreated.tags.map((relation) => ({
-      id: relation.tag.id,
-      name: relation.tag.name,
-    })),
-  })
-  );
+    ...blogSelectQuery
+  });
 
+  return {
+    ...blog,
+    emotions: {
+      total: 0,
+      types: []
+    }
+  };
 };
 
 export const getBlogList = async (params: Record<string, any>): Promise<PageResponse<z.infer<typeof BlogSchema>>> => {
@@ -88,13 +114,28 @@ export const getBlogList = async (params: Record<string, any>): Promise<PageResp
     orderBy: {
       [params.sortBy || "createdAt"]: params.sortOrder || "desc",
     },
-    select: blogSelectQuery,
+    ...blogSelectQuery
   });
 
   const formattedBlogs = blogs.map((blog) => ({
-    ...blog,
-    categories: blog.categories?.map((relation) => relation.category),
-    tags: blog.tags?.map((relation) => relation.tag),
+    id: blog.id,
+    title: blog.title,
+    content: blog.content,
+    description: blog.description,
+    image: blog.image,
+    views: blog.views,
+    postById: blog.postById,
+    categories: blog.categories,
+    postBy: {
+      id: blog.postBy.id,
+      name: `${blog.postBy.firstName} ${blog.postBy.lastName}`.trim()
+    },
+    emotions: {
+      total: 0,
+      types: []
+    },
+    createdAt: blog.createdAt,
+    updatedAt: blog.updatedAt
   }));
 
   return {
@@ -108,31 +149,34 @@ export const getBlogList = async (params: Record<string, any>): Promise<PageResp
 };
 
 export const getBlogDetail = async (id: string) => {
-  return await prisma.blog.findUniqueOrThrow({
-    where: {
-      id
-    },
-    select: blogSelectQuery,
-  }).then(result => ({
-    ...result,
-    categories: result.categories?.map((relation) => relation.category),
-    tags: result.tags?.map((relation) => relation.tag),
-  })).then(async (res) => {
-    const emotionStats = await prisma.emotionBlog.groupBy({
-      by: ['type'],
-      where: {
-        blogId: id
-      },
-      _count: {
-        type: true
-      }
-    });
+  const blog = await prisma.blog.findUnique({
+    where: { id },
+    ...blogSelectQuery
+  });
 
-    const total = emotionStats.reduce((total, emotion) => total + emotion._count.type, 0);
-    const types = emotionStats.map((emotion) => emotion.type);
-    return { ...res, emotions: { total, types } }
-  })
-}
+  if (!blog) {
+    throw new Error("Blog not found");
+  }
+
+  const emotions = await prisma.emotionBlog.groupBy({
+    by: ["type"],
+    where: { blogId: id },
+    _count: true,
+  });
+
+  const totalEmotions = emotions.reduce((acc, curr) => acc + curr._count, 0);
+
+  return {
+    ...blog,
+    emotions: {
+      total: totalEmotions,
+      types: emotions.map((e: { type: string; _count: number }) => ({
+        type: e.type,
+        count: e._count,
+      })),
+    },
+  };
+};
 
 export const deleteBlog = (blogId: string) => {
   return prisma.$transaction([
@@ -148,67 +192,78 @@ export const deleteBlog = (blogId: string) => {
   ]);
 }
 
-export const updateBlog = async (id: string, data: UpdateBlogBodyType) => {
-  const tagIds = data.tags
-    ? await Promise.all(
-      data.tags.map(async (name) => {
-        const tag = await prisma.tagBlog.upsert({
-          where: { name },
-          create: { name },
-          update: {},
-          select: { id: true },
-        });
-        return tag.id;
-      })
-    )
-    : [];
-
-  return prisma.$transaction(async (prisma) => {
-    if (data.categoryIds) {
-      await prisma.blogToCategory.deleteMany({ where: { blogId: id } });
-      await prisma.blogToCategory.createMany({
-        data: data.categoryIds.map((categoryId) => ({
-          blogId: id,
-          categoryId,
-        })),
-      });
-    }
-
-    if (data.tags) {
-      await prisma.blogToTag.deleteMany({ where: { blogId: id } });
-      await prisma.blogToTag.createMany({
-        data: tagIds.map((tagId) => ({
-          blogId: id,
-          tagId,
-        })),
-      });
-    }
-
-    return prisma.blog.update({
-      where: { id },
-      data: {
-        title: data.title,
-        content: data.content,
-        updatedAt: new Date(),
-      },
-      include: {
-        categories: { select: { category: { select: { id: true, name: true } } } },
-        tags: { select: { tag: { select: { id: true, name: true } } } },
-        postBy: postByQuery,
-      },
-    }).then(blogUpdate => (
-      {
-        ...blogUpdate,
-        categories: blogUpdate.categories.map((relation) => ({
-          id: relation.category.id,
-          name: relation.category.name,
-        })),
-        tags: blogUpdate.tags.map((relation) => ({
-          id: relation.tag.id,
-          name: relation.tag.name,
-        })),
-      }
-    ))
+export const updateBlog = async (
+  id: string,
+  data: UpdateBlogBodyType,
+  account: AccountResType["data"]
+) => {
+  const blog = await prisma.blog.findUnique({
+    where: { id },
+    select: { postById: true },
   });
-};
 
+  if (!blog) {
+    throw new Error("Blog not found");
+  }
+
+  if (!account.profile?.id || blog.postById !== account.profile.id) {
+    throw new Error("Unauthorized");
+  }
+
+  const tagIds = await Promise.all(
+    (data.tags || []).map(async (name) => {
+      const tag = await prisma.tagBlog.upsert({
+        where: { name },
+        create: { name },
+        update: {},
+        select: { id: true },
+      });
+      return tag.id;
+    })
+  );
+
+  await prisma.blogToCategory.deleteMany({
+    where: { blogId: id },
+  });
+
+  await prisma.blogToTag.deleteMany({
+    where: { blogId: id },
+  });
+
+  const updateData: Prisma.BlogUpdateInput = {
+    title: data.title,
+    content: data.content,
+    description: data.description,
+    image: data.image,
+  };
+
+  if (data.categoryIds && data.categoryIds.length > 0) {
+    updateData.categories = {
+      create: data.categoryIds.map((categoryId: string) => ({
+        category: { connect: { id: categoryId } },
+      })),
+    };
+  }
+
+  if (tagIds.length > 0) {
+    updateData.tags = {
+      create: tagIds.map((tagId: string) => ({
+        tag: { connect: { id: tagId } },
+      })),
+    };
+  }
+
+  const updatedBlog = await prisma.blog.update({
+    where: { id },
+    data: updateData,
+    ...blogSelectQuery
+  });
+
+  return {
+    ...updatedBlog,
+    emotions: {
+      total: 0,
+      types: [],
+    },
+  };
+};

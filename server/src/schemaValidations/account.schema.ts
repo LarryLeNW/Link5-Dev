@@ -4,8 +4,20 @@ export const AccountRes = z
   .object({
     data: z.object({
       id: z.string(),
-      name: z.string(),
-      email: z.string()
+      email: z.string(),
+      role: z.string(),
+      status: z.string(),
+      profile: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        avatar: z.string().nullable(),
+        coverPhoto: z.string().nullable(),
+        bio: z.string().nullable(),
+        birthday: z.date().nullable(),
+        location: z.string().nullable(),
+        createdAt: z.date(),
+      }).optional().nullable()
     }),
     message: z.string()
   })

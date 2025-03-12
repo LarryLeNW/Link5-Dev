@@ -2,7 +2,8 @@ import z from 'zod'
 
 export const RegisterBody = z
   .object({
-    name: z.string().trim().min(2).max(256),
+    firstName: z.string().trim().min(2).max(256),
+    lastName: z.string().trim().min(2).max(256),
     email: z.string().email(),
     password: z.string().min(6).max(100),
     confirmPassword: z.string().min(6).max(100)
@@ -26,8 +27,20 @@ export const RegisterRes = z.object({
     expiresAt: z.string(),
     account: z.object({
       id: z.string(),
-      name: z.string(),
-      email: z.string()
+      email: z.string(),
+      role: z.string(),
+      status: z.string(),
+      profile: z.object({
+        id: z.string(),
+        firstName: z.string(),
+        lastName: z.string(),
+        avatar: z.string().nullable(),
+        coverPhoto: z.string().nullable(),
+        bio: z.string().nullable(),
+        birthday: z.date().nullable(),
+        location: z.string().nullable(),
+        createdAt: z.date(),
+      }).nullable().optional()
     })
   }),
   message: z.string()
@@ -43,6 +56,15 @@ export const LoginBody = z
   .strict()
 
 export type LoginBodyType = z.TypeOf<typeof LoginBody>
+
+export const ResetBody = z
+  .object({
+    token: z.string(),
+    newPassword: z.string().min(6).max(100)
+  })
+  .strict()
+
+export type ResetBodyType = z.TypeOf<typeof ResetBody>
 
 export const LoginRes = RegisterRes
 

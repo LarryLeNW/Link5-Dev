@@ -1,9 +1,12 @@
 import envConfig from '@/config'
 import {
+  forgotPassword,
   loginController,
   logoutController,
+  registerController,
+  resetPassword,
   slideSessionController,
-  registerController
+  verifyController
 } from '@/controllers/auth.controller'
 import { requireLoginedHook } from '@/hooks/auth.hooks'
 import {
@@ -11,35 +14,54 @@ import {
   LoginBodyType,
   LoginRes,
   LoginResType,
+  RegisterBody,
+  RegisterBodyType,
+  RegisterRes,
+  RegisterResType,
+  ResetBody,
+  ResetBodyType,
   SlideSessionBody,
   SlideSessionBodyType,
   SlideSessionRes,
   SlideSessionResType,
-  RegisterBody,
-  RegisterBodyType,
-  RegisterRes,
-  RegisterResType
 } from '@/schemaValidations/auth.schema'
 import { MessageRes, MessageResType } from '@/schemaValidations/common.schema'
 import { FastifyInstance, FastifyPluginOptions } from 'fastify'
 
 export default async function authRoutes(fastify: FastifyInstance, options: FastifyPluginOptions) {
   fastify.post<{
-    Reply: RegisterResType
+    Reply: MessageResType,
     Body: RegisterBodyType
   }>(
     '/register',
     {
       schema: {
         response: {
-          200: RegisterRes
+          200: MessageRes
         },
         body: RegisterBody
       }
     },
     async (request, reply) => {
-      const { body } = request
-      const { session, account } = await registerController(body)
+      const message = await registerController(request.body)
+      reply.send({
+        message
+      })
+    }
+  )
+
+  fastify.get<{ Reply: RegisterResType; Params: { code: string } }>(
+    '/verify/:code',
+    {
+      schema: {
+        response: {
+          200: RegisterRes
+        }
+      }
+    },
+    async (request, reply) => {
+      const { code } = request.params
+      const { session, account } = await verifyController(code)
       if (envConfig.COOKIE_MODE) {
         reply
           .setCookie('sessionToken', session.token, {
@@ -60,7 +82,7 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
           })
       } else {
         reply.send({
-          message: 'Đăng ký thành công',
+          message: 'Tài khoản kích hoạt thành công.',
           data: {
             token: session.token,
             expiresAt: session.expiresAt.toISOString(),
@@ -70,6 +92,7 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
       }
     }
   )
+
   fastify.post<{ Reply: MessageResType }>(
     '/logout',
     {
@@ -103,6 +126,39 @@ export default async function authRoutes(fastify: FastifyInstance, options: Fast
       }
     }
   )
+
+  fastify.get<{ Reply: MessageResType; Params: { email: string } }>(
+    '/forgot-password/:email',
+    {
+      schema: {
+        response: {
+          200: MessageRes
+        }
+      }
+    },
+    async (request, reply) => {
+      const { email } = request.params
+      const message = await forgotPassword(email)
+      reply.send({ message })
+    }
+  )
+
+  fastify.post<{ Reply: MessageResType; Body: ResetBodyType }>(
+    '/reset',
+    {
+      schema: {
+        response: {
+          200: MessageRes
+        },
+        body: ResetBody
+      }
+    },
+    async (request, reply) => {
+      const message = await resetPassword(request.body)
+      reply.send({ message })
+    }
+  )
+
   fastify.post<{ Reply: LoginResType; Body: LoginBodyType }>(
     '/login',
     {

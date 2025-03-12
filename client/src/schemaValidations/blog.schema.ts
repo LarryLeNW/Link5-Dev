@@ -24,24 +24,26 @@ export const BlogSchema = z.object({
   id: z.string(),
   title: z.string(),
   content: z.string(),
+  image: z.string().nullable(),
   views: z.number(),
   description: z.string().nullable(),
-  image: z.string().nullable(),
+  postById: z.string(),
   categories: z.array(z.object({
+    category: z.object({
+      id: z.string(),
+      name: z.string()
+    })
+  })),
+  postBy: z.object({
     id: z.string(),
-    name: z.string(),
-  })).optional(),
-  tags: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-  })).optional(),
+    name: z.string()
+  }),
   emotions: z.object({
     total: z.number(),
     types: z.array(z.string())
   }).optional(),
-  postBy: z.object({ id: z.string(), name: z.string() }),
-  createdAt: z.string(),
-  updatedAt: z.string()
+  createdAt: z.date(),
+  updatedAt: z.date()
 })
 
 export const BlogRes = z.object({

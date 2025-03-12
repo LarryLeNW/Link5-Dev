@@ -40,8 +40,28 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
         return reply.status(401).send({ message: "Not Permission Denied" })
       }
       const blog = await createBlog(request.body, request.account)
+      const blogData = {
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        description: blog.description,
+        image: blog.image,
+        views: blog.views,
+        postById: blog.postById,
+        categories: blog.categories,
+        postBy: {
+          id: blog.postBy.id,
+          name: `${blog.postBy.firstName} ${blog.postBy.lastName}`.trim()
+        },
+        emotions: {
+          total: 0,
+          types: []
+        },
+        createdAt: blog.createdAt,
+        updatedAt: blog.updatedAt
+      }
       reply.send({
-        data: blog,
+        data: blogData,
         message: 'Tạo blog thành công!'
       })
     }
@@ -61,10 +81,30 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
       }
     },
     async (request, reply) => {
-      const data = await getBlogDetail(request.params.id)
+      const blog = await getBlogDetail(request.params.id)
+      const blogData = {
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        description: blog.description,
+        image: blog.image,
+        views: blog.views,
+        postById: blog.postById,
+        categories: blog.categories,
+        postBy: {
+          id: blog.postBy.id,
+          name: `${blog.postBy.firstName} ${blog.postBy.lastName}`.trim()
+        },
+        emotions: {
+          total: blog.emotions.total,
+          types: blog.emotions.types.map(e => e.type)
+        },
+        createdAt: blog.createdAt,
+        updatedAt: blog.updatedAt
+      }
       reply.send({
-        data,
-        message: 'Lấy thông tin sản phẩm thành công!'
+        data: blogData,
+        message: 'Lấy thông tin blog thành công!'
       })
     }
   )
@@ -133,10 +173,33 @@ export default async function blogRoutes(fastify: FastifyInstance, options: Fast
       preValidation: fastify.auth([requireLoginedHook])
     },
     async (request, reply) => {
-      const blogUpdated = await updateBlog(request.params.id, request.body)
+      if (!request.account) {
+        return reply.status(401).send({ message: "Not Permission Denied" })
+      }
+      const blog = await updateBlog(request.params.id, request.body, request.account)
+      const blogData = {
+        id: blog.id,
+        title: blog.title,
+        content: blog.content,
+        description: blog.description,
+        image: blog.image,
+        views: blog.views,
+        postById: blog.postById,
+        categories: blog.categories,
+        postBy: {
+          id: blog.postBy.id,
+          name: `${blog.postBy.firstName} ${blog.postBy.lastName}`.trim()
+        },
+        emotions: {
+          total: 0,
+          types: []
+        },
+        createdAt: blog.createdAt,
+        updatedAt: blog.updatedAt
+      }
       reply.send({
-        data: blogUpdated,
-        message: 'Cập nhật sản phẩm thành công!'
+        data: blogData,
+        message: 'Cập nhật blog thành công!'
       })
     }
   )

@@ -12,8 +12,29 @@ export const CreateBlogBody = z.object({
 })
 
 export type CreateBlogBodyType = z.TypeOf<typeof CreateBlogBody>
-export type UpdateBlogBodyType = CreateBlogBodyType;
-export const UpdateBlogBody = CreateBlogBody;
+
+export const UpdateBlogBody = CreateBlogBody.partial()
+
+export type UpdateBlogBodyType = z.TypeOf<typeof UpdateBlogBody>
+
+const AccountSchema = z.object({
+  id: z.string(),
+  email: z.string()
+});
+
+const ProfileSchema = z.object({
+  id: z.string(),
+  firstName: z.string(),
+  lastName: z.string(),
+  avatar: z.string().nullable(),
+  coverPhoto: z.string().nullable(),
+  bio: z.string().nullable(),
+  birthday: z.date().nullable(),
+  location: z.string().nullable(),
+  createdAt: z.date(),
+  accountId: z.string(),
+  account: AccountSchema
+});
 
 export const BlogSchema = z.object({
   id: z.string(),
@@ -22,15 +43,17 @@ export const BlogSchema = z.object({
   image: z.string().nullable(),
   views: z.number(),
   description: z.string().nullable(),
+  postById: z.string(),
   categories: z.array(z.object({
+    category: z.object({
+      id: z.string(),
+      name: z.string()
+    })
+  })),
+  postBy: z.object({
     id: z.string(),
-    name: z.string(),
-  })).optional(),
-  tags: z.array(z.object({
-    id: z.string(),
-    name: z.string(),
-  })).optional(),
-  postBy: z.object({ id: z.string(), name: z.string() }),
+    name: z.string()
+  }),
   emotions: z.object({
     total: z.number(),
     types: z.array(z.string())
@@ -46,9 +69,12 @@ export const BlogRes = z.object({
 
 export type BlogResType = z.TypeOf<typeof BlogRes>
 
-export const BlogPageRes = PageRes(BlogSchema);
+export const BlogPageRes = PageRes(BlogSchema)
+
+export type BlogPageResType = z.TypeOf<typeof BlogPageRes>
 
 export const BlogParams = z.object({
   id: z.coerce.string()
 })
+
 export type BlogParamsType = z.TypeOf<typeof BlogParams>

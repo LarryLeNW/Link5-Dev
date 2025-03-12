@@ -6,62 +6,78 @@ import { useState } from "react";
 
 interface CommentItemProps {
     data: BlogCommentResType["data"];
+    onReply?: (commentId: string) => void;
 }
 
-function CommentItem({ data }: CommentItemProps) {
+function CommentItem({ data, onReply }: CommentItemProps) {
     const [replies, setReplies] = useState<BlogCommentListResType["data"]>([]);
-    const [page, setPage] = useState<number>(1)
-    const [isLoading, setIsLoading] = useState<boolean>(false)
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [showReplies, setShowReplies] = useState<boolean>(false);
 
     const handleFetchReplies = async () => {
-        setIsLoading(true)
-        const res = await blogCommentApiRequest.getList({ parentId: data.id });
-        setReplies(res.payload.data || [])
-        setIsLoading(false)
+        try {
+            setIsLoading(true);
+            const res = await blogCommentApiRequest.getList({ parentId: data.id });
+            setReplies(res.payload.data || []);
+            setShowReplies(true);
+        } catch (error) {
+            console.error("Error fetching replies:", error);
+        } finally {
+            setIsLoading(false);
+        }
     }
 
+    return (
+        <div className="flex flex-col gap-2 py-2 px-4">
+            <div className="flex gap-2">
+                <Image
+                    src={data.postBy.avatar || "/avatar-default.jpg"}
+                    width={40}
+                    height={40}
+                    alt='avatar'
+                    className='w-10 h-10 rounded-full object-cover'
+                />
+                <div className="border rounded flex flex-col w-full px-4 pb-2">
+                    <p className="font-bold">{data.postBy.name}</p>
+                    <p className="py-1">{data.content}</p>
+                    <div className="flex gap-4 text-sm text-gray-600">
+                        <p>{moment(data.createdAt).fromNow()}</p>
+                        <button className="hover:text-blue-600">Thích</button>
+                        <button
+                            className="hover:text-blue-600"
+                            onClick={() => onReply?.(data.id)}
+                        >
+                            Trả lời
+                        </button>
+                    </div>
 
-    return <div className="flex flex-col gap-2  py-2 px-4"  >
-        <div className="flex gap-2">
-            <Image src={data.postBy.avatar || "/avatar-default.jpg"} width={180} height={180} alt='avatar' className='w-10 h-10 rounded-full'></Image>
-            <div className="border rounded flex flex-col w-full px-4 pb-2">
-                <p className="font-bold">{data.postBy.name}</p>
-                <p>{data.content}</p>
-                <div className="flex gap-4 ">
-                    <p className="text-small">{moment(data.createdAt).fromNow()}</p>
-                    <p className="cursor-pointer">Thích</p>
-                    <p className="text-gray-600 cursor-pointer">Trả lời</p>
-                </div>
-                {
-                    (!!data._count?.replies && replies.length == 0) && (
-                        <div className="font-bold cursor-pointer flex gap-4 items-center" onClick={() => handleFetchReplies()}>
-                            <p>
-                                Xem {data._count?.replies} trả lời
-                            </p>
-                            {
-                                isLoading && (
-                                    <p className="animate-spin">
-                                        <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1.84998 7.49998C1.84998 4.66458 4.05979 1.84998 7.49998 1.84998C10.2783 1.84998 11.6515 3.9064 12.2367 5H10.5C10.2239 5 10 5.22386 10 5.5C10 5.77614 10.2239 6 10.5 6H13.5C13.7761 6 14 5.77614 14 5.5V2.5C14 2.22386 13.7761 2 13.5 2C13.2239 2 13 2.22386 13 2.5V4.31318C12.2955 3.07126 10.6659 0.849976 7.49998 0.849976C3.43716 0.849976 0.849976 4.18537 0.849976 7.49998C0.849976 10.8146 3.43716 14.15 7.49998 14.15C9.44382 14.15 11.0622 13.3808 12.2145 12.2084C12.8315 11.5806 13.3133 10.839 13.6418 10.0407C13.7469 9.78536 13.6251 9.49315 13.3698 9.38806C13.1144 9.28296 12.8222 9.40478 12.7171 9.66014C12.4363 10.3425 12.0251 10.9745 11.5013 11.5074C10.5295 12.4963 9.16504 13.15 7.49998 13.15C4.05979 13.15 1.84998 10.3354 1.84998 7.49998Z" fill="currentColor" fillRule="evenodd" clipRule="evenodd"></path></svg>
-                                    </p>
-                                )
-                            }
-                        </div>
-                    )
-                }
-                {
-                    replies && (
-                        <div className="mt-4 flex flex-col gap-4  " >
-                            {replies.map(replies => (
-                                <CommentItem data={replies} key={replies.id} />
+                    {!!data._count?.replies && (
+                        <button
+                            className="font-bold text-sm text-blue-600 flex gap-2 items-center mt-2"
+                            onClick={handleFetchReplies}
+                        >
+                            {showReplies ? "Ẩn trả lời" : `Xem ${data._count.replies} trả lời`}
+                            {isLoading && (
+                                <span className="animate-spin">⌛</span>
+                            )}
+                        </button>
+                    )}
+
+                    {showReplies && replies.length > 0 && (
+                        <div className="mt-4 flex flex-col gap-4 pl-4">
+                            {replies.map(reply => (
+                                <CommentItem
+                                    key={reply.id}
+                                    data={reply}
+                                    onReply={onReply}
+                                />
                             ))}
                         </div>
-                    )
-                }
+                    )}
+                </div>
             </div>
-
         </div>
-
-    </div>
+    );
 }
 
 export default CommentItem;

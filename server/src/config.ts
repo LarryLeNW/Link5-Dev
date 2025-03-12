@@ -30,6 +30,11 @@ const configSchema = z.object({
   IK_URL_ENDPOINT: z.string(),
   IK_PUBLIC_KEY: z.string(),
   IK_PRIVATE_KEY: z.string(),
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.coerce.number().default(587),
+  SMTP_EMAIL: z.string().email(),
+  SMTP_PASSWORD: z.string(),
+  FRONTEND_URL: z.string()
 })
 
 const configServer = configSchema.safeParse(process.env)

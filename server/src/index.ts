@@ -14,6 +14,7 @@ import socketIOPlugin from '@/plugins/socketIO.plugin'
 import { createFolder } from '@/utils/helpers'
 import { handleSeedData } from '@/seed/main'
 import * as routes from '@/routes'
+import prisma from '@/database'
 
 const fastify = Fastify({ logger: true })
 
@@ -66,6 +67,8 @@ const start = async () => {
     if (envConfig.IS_PRODUCTION) {
       console.log(`Đang ở mode production với domain: ${envConfig.PRODUCTION_URL}`)
     }
+
+
   } catch (err) {
     fastify.log.error(err)
     process.exit(1)

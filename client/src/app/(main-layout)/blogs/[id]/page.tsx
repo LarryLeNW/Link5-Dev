@@ -101,7 +101,7 @@ export default async function BlogDetail(props: Props) {
                 </p>
               </div>
             )}
-            <CommentBlog blogId={blog.id} />
+            {/* <CommentBlog blogId={blog.id} /> */}
           </div>
         </div>
       )}
