@@ -5,7 +5,7 @@ import styles from "./loginPage.module.css";
 import { useRouter } from "next/navigation";
 import { Button, Input } from "antd";
 import { useState, useEffect } from "react";
-import { handleDefaultLogin } from "@/actions/auth.action";
+import { handleDefaultLogin, handleRegister } from "@/actions/auth.action";
 import { sendEmail } from "@/services/sendMail";
 
 interface EmailPayload {
@@ -37,7 +37,6 @@ const LoginPage = () => {
     const handleLogin = async (): Promise<void> => {
         try {
             const result = await handleDefaultLogin(email, password);
-            console.log("🚀 ~ handleLogin ~ result:", result);
 
             if (result?.error) {
                 alert(`Login failed: ${result.error}`);
@@ -62,35 +61,44 @@ const LoginPage = () => {
         }
 
         try {
-            const response = await fetch('/api/sendEmail', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    to: [process.env.NEXT_PUBLIC_EMAIL_TO],
-                    cc: [''],
-                    bcc: [process.env.NEXT_PUBLIC_EMAIL_BCC],
-                    message: {
-                        subject: `YOUR SUBJECT`,
-                        text: 'YOUR TEXT',
-                        html: `
-                     <html>
-                        <head></head>
-                        <body>
-                           <p>Hello user</p>
-                           <p><b>Full Name:</b> demo name</p>
-                           <p><b>Email:</b> demo email</p>
-                           <p><b>Phone number: </b> demo phone </p>
-                           <p><b>Message:</b> demo massage</p>
-                           <br>
-                           <p>Thank you & Regards,<br><b>Team</b></p>
-                        </body>
-                     </html>`,
-                    },
-                }),
-            });
+            const result = await handleRegister({ email, password })
+            console.log("🚀 ~ handleSignup ~ response:", result)
 
-            const result = await response.json();
-            alert(result.message); // You can also add route instead of alert  route.push() add you own page.
+            if (result.ok) {
+                alert("Signup successful! You can now log in.");
+                setSignInMode(false);
+            } else {
+                alert(`Signup failed: ${result.message}`);
+            }
+            // const response = await fetch('/api/sendEmail', {
+            //     method: 'POST',
+            //     headers: { 'Content-Type': 'application/json' },
+            //     body: JSON.stringify({
+            //         to: [process.env.NEXT_PUBLIC_EMAIL_TO],
+            //         cc: [''],
+            //         bcc: [process.env.NEXT_PUBLIC_EMAIL_BCC],
+            //         message: {
+            //             subject: `YOUR SUBJECT`,
+            //             text: 'YOUR TEXT',
+            //             html: `
+            //          <html>
+            //             <head></head>
+            //             <body>
+            //                <p>Hello user</p>
+            //                <p><b>Full Name:</b> demo name</p>
+            //                <p><b>Email:</b> demo email</p>
+            //                <p><b>Phone number: </b> demo phone </p>
+            //                <p><b>Message:</b> demo massage</p>
+            //                <br>
+            //                <p>Thank you & Regards,<br><b>Team</b></p>
+            //             </body>
+            //          </html>`,
+            //         },
+            //     }),
+            // });
+
+            // const result = await response.json();
+            // alert(result.message); // You can also add route instead of alert  route.push() add you own page.
         } catch (error: unknown) {
             console.error("🚀 ~ handleSignup ~ error:", error);
             alert("Failed to send the email. Please try again.");
