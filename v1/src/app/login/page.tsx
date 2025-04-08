@@ -23,7 +23,7 @@ interface EmailTemplateProps {
 const LoginPage = () => {
     const { status } = useSession();
     const [email, setEmail] = useState<string>("larrylenw@gmail.com");
-    const [password, setPassword] = useState<string>("34983249273");
+    const [password, setPassword] = useState<string>("123123");
     const [signInMode, setSignInMode] = useState<boolean>(false);
     const [loading, setLoading] = useState<boolean>(false);
     const router = useRouter();
