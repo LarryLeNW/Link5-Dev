@@ -72,7 +72,7 @@ const UpdateBlog = (props: IProps) => {
                 form={form}
             >
                 <Row gutter={[15, 15]}>
-                   <Col span={24} md={12}>
+                    <Col span={24} md={12}>
                         <Form.Item
                             label="Title"
                             name="title"
@@ -82,7 +82,7 @@ const UpdateBlog = (props: IProps) => {
                         </Form.Item>
                     </Col>
 
-                     <Col span={24} md={12}>
+                    <Col span={24} md={12}>
                         <Form.Item
                             label="Author"
                             name="author"
@@ -91,7 +91,7 @@ const UpdateBlog = (props: IProps) => {
                             <Input />
                         </Form.Item>
                     </Col>
-                     <Col span={24} md={24  }>
+                    <Col span={24} md={24}>
                         <Form.Item
                             label="Content"
                             name="content"

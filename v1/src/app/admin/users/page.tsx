@@ -1,11 +1,8 @@
-'use client';
-import UsersTable from "@/components/admin/users/users.table";
-
-const UsersPage = async (props: any) => {
+const UsersPage = (props: any) => {
 
     return (
         <div>
-         user manager page
+            user manager page
 
         </div>
     )

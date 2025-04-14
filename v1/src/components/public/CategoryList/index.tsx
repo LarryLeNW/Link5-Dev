@@ -24,12 +24,13 @@ const getData = async (): Promise<Category[]> => {
 };
 
 const CategoryList: React.FC = async () => {
-    const data: Category[] = (await getData()) || [];
+    // const data: Category[] = (await getData()) || [];
 
     return (
         <div className={styles.container}>
             <div className={styles.categories}>
-                {data?.map((item) => (
+                list category....
+                {/* {data?.map((item) => (
                     <Link
                         href={`/blog?cat=${item.slug}`}
                         className={`${styles.category} ${styles[item.slug]}`}
@@ -46,7 +47,7 @@ const CategoryList: React.FC = async () => {
                         )}
                         {item.title}
                     </Link>
-                ))}
+                ))} */}
             </div>
         </div>
     );

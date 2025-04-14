@@ -18,13 +18,14 @@ export default function Home({ searchParams }: HomeProps) {
 
   return (
     <div className={styles.container}>
-      <Featured />
+      home
+      {/* <Featured />
       <CategoryList />
-      <Banner/>
+      <Banner />
       <div className={styles.content}>
         <CardList page={page} />
         <Menu />
-      </div>
+      </div> */}
     </div>
   );
 }
